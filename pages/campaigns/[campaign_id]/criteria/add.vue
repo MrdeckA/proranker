@@ -13,19 +13,12 @@
               label="Type"
               variant="outlined"
               density="comfortable"
-              :items="['item 1', 'item 2', 'item 3', 'item 4', '1', 'ff', 'kk']"
+              :items="items"
             ></v-autocomplete>
           </v-col>
           <v-col>
             <v-text-field
               label="Valeur"
-              variant="outlined"
-              density="comfortable"
-            ></v-text-field>
-          </v-col>
-          <v-col>
-            <v-text-field
-              label="Limite"
               variant="outlined"
               density="comfortable"
             ></v-text-field>
@@ -44,4 +37,20 @@ definePageMeta({
 const router = useRouter();
 
 const route = useRoute();
+
+const items = ref([
+  "Nombre de prix",
+  "Nombre d'expériences",
+  "Nombre d'années d'expériences",
+  "Nombre de certifications",
+  "Compétences",
+  "Nombre minimum de compétences",
+  "Langue",
+  "Nombre minmim de langues",
+  "Diplome minimum",
+  "Certifications",
+  "Nombre de diplomes",
+  "Nombre de compétences",
+  "Localisation",
+]);
 </script>

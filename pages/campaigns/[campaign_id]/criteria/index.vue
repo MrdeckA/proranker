@@ -19,11 +19,10 @@
           class="me-5"
         ></v-text-field>
 
-        <v-btn
-          :to="'/campaigns/' + route.params.campaign_id + '/criteria/add'"
-          color="primary"
+        <v-btn color="primary" @click="openFormDialog = true"
           >Ajouter un critère</v-btn
         >
+        <!-- :to="'/campaigns/' + route.params.campaign_id + '/criteria/add'" -->
       </v-card-title>
 
       <v-divider></v-divider>
@@ -74,6 +73,27 @@
         >Continuer</v-btn
       >
     </div>
+    <!--Modal form-->
+    <v-dialog v-model="openFormDialog" width="500">
+      <template v-slot:activator="{ props }">
+        <v-btn v-bind="props" text="Open Dialog"> </v-btn>
+      </template>
+
+      <template v-slot:default="{ isActive }">
+        <v-card title="Dialog">
+          <v-card-text>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn text="Close Dialog" @click="isActive.value = false"></v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -83,4 +103,6 @@ definePageMeta({
 });
 
 const route = useRoute();
+
+const openFormDialog = ref(false);
 </script>

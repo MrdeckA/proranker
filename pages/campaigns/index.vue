@@ -1,31 +1,68 @@
 <template>
   <v-container>
-    <h2 class="text-center">Campagnes</h2>
-    <v-data-table-server
-      class="border shadow-lg"
-      v-model:items-per-page="itemsPerPage"
-      :headers="headers"
-      :items-length="totalItems"
-      :items="serverItems"
-      :search="search"
-      item-value="name"
-    >
-      <template #item.action="{ item }">
-        <v-btn size="small" :to="`/campaigns/${item.id}`" icon variant="flat"
-          ><v-icon color="primary"> mdi-eye </v-icon></v-btn
+    <v-card flat border>
+      <v-card-title class="d-flex align-center pe-2">
+        <v-icon icon="mdi-video-input-component"></v-icon>
+        <span class="ms-5">Liste des campagnes</span>
+
+        <v-spacer></v-spacer>
+
+        <v-text-field
+          v-model="search"
+          prepend-inner-icon="mdi-magnify"
+          density="compact"
+          label="Search"
+          single-line
+          flat
+          hide-details
+          variant="solo-filled"
+          class="me-5"
+        ></v-text-field>
+
+        <v-btn :to="'/campaigns/add'" color="primary"
+          >Ajouter une campagne</v-btn
         >
-        <v-btn size="small" icon variant="flat">
-          <v-icon color="primary"> mdi-pencil </v-icon>
-        </v-btn>
+      </v-card-title>
 
-        <v-btn size="small" icon variant="flat">
-          <v-icon color="primary"> mdi-delete </v-icon>
-        </v-btn>
-
-        <!-- <v-btn icon variant="flat">
+      <v-divider></v-divider>
+      <v-data-table-server
+        class="border shadow-lg"
+        v-model:items-per-page="itemsPerPage"
+        :headers="headers"
+        :items-length="totalItems"
+        :items="serverItems"
+        :search="search"
+        item-value="name"
+      >
+        <template #item.description_poste="{ item }">
+          <span class="text-truncate">{{ item.description_poste }}</span>
+          <!-- <v-btn icon variant="flat">
           <v-icon color="primary"> mdi-dots-vertical </v-icon>
         </v-btn> -->
-      </template></v-data-table-server
+        </template>
+        <template #item.id="{ item, index }">
+          <span class="text-truncate">{{ index + 1 }}</span>
+          <!-- <v-btn icon variant="flat">
+          <v-icon color="primary"> mdi-dots-vertical </v-icon>
+        </v-btn> -->
+        </template>
+        <template #item.action="{ item }">
+          <v-btn size="small" :to="`/campaigns/${item.id}`" icon variant="flat"
+            ><v-icon color="primary"> mdi-eye </v-icon></v-btn
+          >
+          <v-btn size="small" icon variant="flat">
+            <v-icon color="primary"> mdi-pencil </v-icon>
+          </v-btn>
+
+          <v-btn size="small" icon variant="flat">
+            <v-icon color="primary"> mdi-delete </v-icon>
+          </v-btn>
+
+          <!-- <v-btn icon variant="flat">
+          <v-icon color="primary"> mdi-dots-vertical </v-icon>
+        </v-btn> -->
+        </template></v-data-table-server
+      ></v-card
     >
   </v-container>
 </template>
@@ -34,6 +71,8 @@
 definePageMeta({
   layout: "user",
 });
+const route = useRoute();
+
 const serverItems = ref([] as any[]);
 const headers = ref([
   {
@@ -42,9 +81,14 @@ const headers = ref([
     sortable: false,
     key: "id",
   },
-  { title: "Titre", key: "titre", align: "start" },
+  { title: "Nom", width: "25%", key: "nom", align: "start" },
 
-  { title: "Description du poste", key: "description_poste", align: "start" },
+  {
+    title: "Intitulé du poste",
+    width: "25%",
+    key: "intitule_poste",
+    align: "start",
+  },
   { title: "Action", key: "action", align: "center" },
 ]);
 

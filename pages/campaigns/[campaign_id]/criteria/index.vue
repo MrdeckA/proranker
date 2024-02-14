@@ -26,7 +26,11 @@
       </v-card-title>
 
       <v-divider></v-divider>
-      <v-data-table v-model:search="search" :items="items">
+      <v-data-table
+        :headers="headers"
+        v-model:search="search"
+        :items="criteres"
+      >
         <template v-slot:header.stock>
           <div class="text-end">Stock</div>
         </template>
@@ -40,27 +44,21 @@
             ></v-img>
           </v-card>
         </template>
+        <template #item.action="{ item }">
+          <v-btn size="small" :to="`/campaigns/${item.id}`" icon variant="flat"
+            ><v-icon color="primary"> mdi-eye </v-icon></v-btn
+          >
+          <v-btn size="small" icon variant="flat">
+            <v-icon color="primary"> mdi-pencil </v-icon>
+          </v-btn>
 
-        <template v-slot:item.rating="{ item }">
-          <v-rating
-            :model-value="item.rating"
-            color="orange-darken-2"
-            density="compact"
-            size="small"
-            readonly
-          ></v-rating>
-        </template>
+          <v-btn size="small" icon variant="flat">
+            <v-icon color="primary"> mdi-delete </v-icon>
+          </v-btn>
 
-        <template v-slot:item.stock="{ item }">
-          <div class="text-end">
-            <v-chip
-              :color="item.stock ? 'green' : 'red'"
-              :text="item.stock ? 'In stock' : 'Out of stock'"
-              class="text-uppercase"
-              label
-              size="small"
-            ></v-chip>
-          </div>
+          <!-- <v-btn icon variant="flat">
+          <v-icon color="primary"> mdi-dots-vertical </v-icon>
+        </v-btn> -->
         </template>
       </v-data-table>
     </v-card>
@@ -74,24 +72,46 @@
       >
     </div>
     <!--Modal form-->
-    <v-dialog v-model="openFormDialog" width="500">
-      <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" text="Open Dialog"> </v-btn>
-      </template>
-
+    <v-dialog v-model="openFormDialog" width="750">
       <template v-slot:default="{ isActive }">
-        <v-card title="Dialog">
-          <v-card-text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-
-            <v-btn text="Close Dialog" @click="isActive.value = false"></v-btn>
-          </v-card-actions>
-        </v-card>
+        <v-container>
+          <v-card class="px-0" title="Ajout d'un nouveau critère">
+            <template #append>
+              <v-btn
+                class="ma-2"
+                color="primary"
+                @click="isActive.value = false"
+                >Retour</v-btn
+              >
+            </template>
+            <v-form @submit.prevent="onFormSubmit">
+              <v-row class="mx-2">
+                <v-col>
+                  <v-autocomplete
+                    v-model="newCriteria.type"
+                    label="Type"
+                    variant="outlined"
+                    density="comfortable"
+                    :items="itemsList"
+                  ></v-autocomplete>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    v-model="newCriteria.value"
+                    label="Valeur"
+                    variant="outlined"
+                    density="comfortable"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <div class="text-center">
+                <v-btn class="ma-5" color="primary" type="submit"
+                  >Ajouter</v-btn
+                >
+              </div>
+            </v-form>
+          </v-card>
+        </v-container>
       </template>
     </v-dialog>
   </v-container>
@@ -105,4 +125,50 @@ definePageMeta({
 const route = useRoute();
 
 const openFormDialog = ref(false);
+
+const itemsList = ref([
+  "Nombre de prix",
+  "Nombre d'expériences",
+  "Nombre d'années d'expériences",
+  "Nombre de certifications",
+  "Compétences",
+  "Nombre minimum de compétences",
+  "Langue",
+  "Nombre minmim de langues",
+  "Diplome minimum",
+  "Certifications",
+  "Nombre de diplomes",
+  "Nombre de compétences",
+  "Localisation",
+]);
+
+const newCriteria = ref({} as Critere);
+
+interface Critere {
+  type?: String;
+  value?: String;
+}
+const criteres: Ref<Critere[]> = ref([
+  {
+    type: "One",
+    value: "True",
+  },
+]);
+
+const headers = ref([
+  { title: "Type", width: "25%", key: "type", align: "start" },
+  {
+    title: "Value",
+    key: "value",
+    align: "start",
+  },
+  { title: "Action", key: "action", align: "center" },
+]);
+
+const onFormSubmit = () => {
+  console.log(newCriteria.value);
+  criteres.value.push(newCriteria.value);
+  newCriteria.value = {};
+  openFormDialog.value = false;
+};
 </script>

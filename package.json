@@ -39,6 +39,7 @@
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@types/lodash": "^4.14.202",
     "@types/luxon": "^3.4.2",
+    "@types/pdf-parse": "^1.1.4",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",

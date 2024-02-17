@@ -173,7 +173,7 @@
 
 <script lang="ts" setup>
 import { isArray } from "lodash";
-
+import { Campagne } from "@/types/index";
 definePageMeta({
   layout: "user",
 });
@@ -213,6 +213,7 @@ const headers = ref([
   { title: "Action", key: "action", align: "center" },
 ]);
 
+const campagneToEdit = ref({} as Campagne);
 const onFormSubmit = () => {
   console.log(newCriteria.value);
   criteres.value.push(newCriteria.value);

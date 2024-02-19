@@ -85,7 +85,7 @@
               <v-row class="mx-2">
                 <v-col>
                   <v-autocomplete
-                    v-model="newCriteria.type"
+                    v-model="campagneToEditType"
                     label="Type"
                     variant="outlined"
                     density="comfortable"
@@ -94,23 +94,35 @@
                   ></v-autocomplete>
                 </v-col>
                 <v-col>
+                  <!--new-->
                   <v-autocomplete
-                    v-if="
-                      ['A des prix', 'A des certifications'].includes(
-                        newCriteria?.type
-                      )
-                    "
-                    v-model="newCriteria.valeur"
+                    v-if="campagneToEditType === 'A des prix'"
+                    v-model="campagneToEdit.has_awards"
                     label="Valeur"
                     variant="outlined"
                     density="comfortable"
-                    :items="['Oui', 'Non']"
+                    :items="binariesItems"
+                    item-title="label"
+                    item-value="value"
                     required
                   >
                   </v-autocomplete>
                   <v-autocomplete
-                    v-if="newCriteria.type === 'Compétences'"
-                    v-model="newCriteria.valeur"
+                    v-if="campagneToEditType === 'A des certifications'"
+                    v-model="campagneToEdit.has_certifications"
+                    label="Valeur"
+                    variant="outlined"
+                    density="comfortable"
+                    :items="binariesItems"
+                    item-title="label"
+                    item-value="value"
+                    required
+                  >
+                  </v-autocomplete>
+
+                  <v-autocomplete
+                    v-if="campagneToEditType === 'Compétences'"
+                    v-model="campagneToEdit.skills"
                     label="Valeur"
                     variant="outlined"
                     density="comfortable"
@@ -119,20 +131,10 @@
                     required
                   >
                   </v-autocomplete>
+
                   <v-autocomplete
-                    v-if="newCriteria.type === 'Langues'"
-                    v-model="newCriteria.valeur"
-                    label="Valeur"
-                    variant="outlined"
-                    density="comfortable"
-                    :items="['Français', 'Anglais', 'Chinois']"
-                    multiple
-                    required
-                  >
-                  </v-autocomplete>
-                  <v-autocomplete
-                    v-if="newCriteria.type === 'Diplome minimum'"
-                    v-model="newCriteria.valeur"
+                    v-if="campagneToEditType === 'Diplome minimum'"
+                    v-model="campagneToEdit.minimum_degree"
                     label="Valeur"
                     variant="outlined"
                     density="comfortable"
@@ -141,21 +143,54 @@
                   >
                   </v-autocomplete>
 
+                  <v-autocomplete
+                    v-if="campagneToEditType === 'Langues'"
+                    v-model="campagneToEdit.languages"
+                    label="Valeur"
+                    variant="outlined"
+                    density="comfortable"
+                    :items="['Français', 'Anglais', 'Chinois']"
+                    multiple
+                    required
+                  >
+                  </v-autocomplete>
+
                   <v-text-field
                     v-if="
-                      [
-                        'Nombre minimum d\'expériences',
-                        'Nombre minimum d\'années d\'expériences',
-                        'Nombre minimum de langues',
-                      ].includes(newCriteria?.type)
+                      campagneToEditType === 'Nombre minimum d\'expériences'
                     "
-                    v-model="newCriteria.valeur"
+                    v-model="campagneToEdit.minimum_number_of_experiences"
                     label="Valeur"
                     variant="outlined"
                     density="comfortable"
                     required
                     type="number"
                   ></v-text-field>
+                  <v-text-field
+                    v-if="
+                      campagneToEditType ===
+                      'Nombre minimum d\'années d\'expériences'
+                    "
+                    v-model="
+                      campagneToEdit.minimum_number_of_years_of_experience
+                    "
+                    label="Valeur"
+                    variant="outlined"
+                    density="comfortable"
+                    required
+                    type="number"
+                  ></v-text-field>
+                  <v-text-field
+                    v-if="campagneToEditType === 'Nombre minimum de langues'"
+                    v-model="campagneToEdit.minimum_number_of_languages"
+                    label="Valeur"
+                    variant="outlined"
+                    density="comfortable"
+                    required
+                    type="number"
+                  ></v-text-field>
+
+                  <!--new-->
                 </v-col>
               </v-row>
               <div class="text-center">
@@ -173,7 +208,7 @@
 
 <script lang="ts" setup>
 import { isArray } from "lodash";
-import { Campagne } from "@/types/index";
+import { type Campagne } from "@/types";
 definePageMeta({
   layout: "user",
 });
@@ -195,8 +230,6 @@ const criteriaTypes = ref(
   ].sort()
 );
 
-const newCriteria = ref({} as Critere);
-
 interface Critere {
   type: string;
   valeur: string | string[];
@@ -213,48 +246,56 @@ const headers = ref([
   { title: "Action", key: "action", align: "center" },
 ]);
 
+const binariesItems = ref([
+  {
+    label: "Oui",
+    value: true,
+  },
+  {
+    label: "Non",
+    value: false,
+  },
+]);
+
 const campagneToEdit = ref({} as Campagne);
+const campagneToEditType = ref("");
 const onFormSubmit = () => {
-  console.log(newCriteria.value);
-  criteres.value.push(newCriteria.value);
-  newCriteria.value = {};
   openFormDialog.value = false;
 
-  const selectedCriteriaTypes = criteres.value?.map(
-    (criteria) => criteria.type
-  );
+  // const selectedCriteriaTypes = criteres.value?.map(
+  //   (criteria) => criteria.type
+  // );
 
-  criteriaTypes.value = criteriaTypes.value.filter(
-    (criteriaType) => !selectedCriteriaTypes.includes(criteriaType)
-  );
-  console.log("selected", criteriaTypes);
+  // criteriaTypes.value = criteriaTypes.value.filter(
+  //   (criteriaType) => !selectedCriteriaTypes.includes(criteriaType)
+  // );
 };
 
 const onContinueButtonClick = async () => {
-  console.log("contiinons", {
-    campagne: 14,
-    criteres: criteres.value,
-  });
-
-  const { data, pending, error, refresh, execute, status } = await useFetch(
-    "http://127.0.0.1:8000/api/criteres/create-many/",
-    {
-      method: "post",
-      body: {
-        campagne: route.params.campaign_id ?? "12",
-        criteres: criteres.value,
-      },
-    }
-  );
-
-  if (data.value) {
-    console.log(data.value);
-  }
-
-  if (error.value) {
-    console.log(error.value);
-  }
+  console.log(campagneToEdit.value, campagneToEditType.value);
+  // console.log("contiinons", {
+  //   campagne: 14,
+  //   criteres: criteres.value,
+  // });
+  // const { data, pending, error, refresh, execute, status } = await useFetch(
+  //   "http://127.0.0.1:8000/api/criteres/create-many/",
+  //   {
+  //     method: "post",
+  //     body: {
+  //       campagne: route.params.campaign_id ?? "12",
+  //       criteres: criteres.value,
+  //     },
+  //   }
+  // );
+  // if (data.value) {
+  //   console.log(data.value);
+  // }
+  // if (error.value) {
+  //   console.log(error.value);
+  // }
 };
+
+/*
 async function init() {
   const { data, pending, error, refresh, execute, status } = await useFetch(
     "http://127.0.0.1:8000/api/criteres/",
@@ -283,5 +324,5 @@ async function init() {
     console.log(error.value);
   }
 }
-await init();
+await init();*/
 </script>

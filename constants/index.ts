@@ -32,11 +32,11 @@ export const NAVIGATION_DRAWER_ROUTES = [
     path: "/profile",
     icon: "mdi-view-dashboard",
   },
-  {
-    title: "Paramètres",
-    path: "/settings",
-    icon: "mdi-view-dashboard",
-  },
+  // {
+  //   title: "Paramètres",
+  //   path: "/settings",
+  //   icon: "mdi-view-dashboard",
+  // },
   {
     title: "Déconnexion",
     path: "/settings",

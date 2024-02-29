@@ -2,7 +2,7 @@
   <v-container class="my-5">
     <h1 class="text-center">Profil</h1>
     <v-form ref="formRef" @submit.prevent="onFormSubmit">
-      <v-card flat class="border mx-auto" width="80%">
+      <v-card flat class="border mx-auto" width="50%">
         <v-card-text>
           <v-row>
             <v-col cols="12">
@@ -23,59 +23,41 @@
             </v-col>
             <v-col cols="12">
               <v-text-field
-                id="firstName"
-                v-model="meInformation.name"
+                id="lastName"
+                v-model="meInformation.last_name"
                 label="Nom"
                 placeholder="Doe"
                 required
                 hint="*Champ requis"
                 persistent-hint
-                autocomplete="fisrtName"
+                autocomplete="lastName"
+                :rules="[ruleRequired]"
+                type="text"
+                prepend-inner-icon="mdi-account"
+                name="lastName"
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12">
+              <v-text-field
+                id="firstName"
+                v-model="meInformation.first_name"
+                label="Prénom"
+                placeholder="John"
+                required
+                hint="*Champ requis"
+                persistent-hint
+                autocomplete="firstName"
                 :rules="[ruleRequired]"
                 type="text"
                 prepend-inner-icon="mdi-account"
                 name="firstName"
               ></v-text-field>
             </v-col>
-
-            <v-col cols="12">
-              <v-autocomplete
-                id="city"
-                v-model="meInformation.city"
-                name="city"
-                label="Ville de l'agence"
-                hint="*Champ requis"
-                placeholder="Ville"
-                autocomplete="ville"
-                :items="Benin_Cities"
-                :rules="[ruleRequired]"
-                prepend-inner-icon="mdi-city"
-                persistent-hint
-                required
-              ></v-autocomplete>
-            </v-col>
-
-            <v-col cols="12">
-              <v-text-field
-                id="phoneNumber"
-                v-model="meInformation.phoneNumber"
-                label="Numéro de téléphone de l'agence"
-                placeholder="+22995000000"
-                required
-                hint="*Champ requis"
-                persistent-hint
-                :rules="[ruleRequired]"
-                type="text"
-                prepend-inner-icon="mdi-phone"
-                name="phoneNumber"
-              ></v-text-field>
-            </v-col>
           </v-row>
         </v-card-text>
         <v-divider></v-divider>
         <v-col class="d-flex justify-space-around">
-          <v-btn color="red" @click="resetForm"> Réinitialiser </v-btn>
-
           <v-btn
             color="primary"
             :disabled="isSaving"
@@ -85,11 +67,6 @@
             Sauvegarder</v-btn
           >
         </v-col>
-        <FloatingActionButton
-          :disabled="isSaving"
-          :is-saving="isSaving"
-          :on-click="onFormSubmit"
-        />
       </v-card>
     </v-form>
   </v-container>
@@ -97,7 +74,7 @@
   <VContainer class="mt-5 mb-16">
     <h1 class="text-center">Mot de passe</h1>
     <VRow no-gutters align="center" justify="center">
-      <v-card width="80%">
+      <v-card width="50%">
         <VCol cols="12">
           <VForm ref="formRef" @submit.prevent="submitForm">
             <div class="mt-1">
@@ -168,7 +145,7 @@ import {
 } from "~/helpers/rules";
 const { appName } = useAppConfig();
 import { useAppStore } from "~/store";
-import type { TAgency } from "~/types";
+import type { TUser } from "~/types";
 
 useHead({
   title: `Mise à jour profil - ${appName}`,
@@ -204,7 +181,11 @@ const submitForm = async () => {
   //   console.log(formRef.value.validate());
 };
 
-const meInformation = ref({} as TAgency);
+const meInformation = ref({
+  first_name: "John",
+  last_name: "Doe",
+  email: "johndoe@gmailc.com",
+} as TUser);
 
 const onFormSubmit = async () => {
   // resetForm();

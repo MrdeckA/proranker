@@ -116,12 +116,12 @@ definePageMeta({
 });
 
 const stats = ref({
-  recruitments: 0,
-  files: 0,
-  collaborators: 0,
-  inProgressRanking: 0,
-  endedRanking: 0,
-  candidates: 0,
+  recruitments: 5,
+  files: 50,
+  collaborators: 5,
+  inProgressRanking: 1,
+  endedRanking: 4,
+  candidates: 40,
 });
 
 function formatValue(value: number) {

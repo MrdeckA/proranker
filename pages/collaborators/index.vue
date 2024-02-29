@@ -2,7 +2,7 @@
   <v-container>
     <v-card flat border>
       <v-card-title class="d-flex align-center pe-2">
-        <v-icon icon="mdi-video-input-component"></v-icon>
+        <v-icon icon="mdi-account-multiple"></v-icon>
         <span class="ms-5">Liste des collaborateurs</span>
 
         <v-spacer></v-spacer>
@@ -50,13 +50,6 @@
           <v-btn size="small" :to="`/campaigns/${item.id}`" icon variant="flat"
             ><v-icon color="primary"> mdi-eye </v-icon></v-btn
           >
-          <v-btn size="small" icon variant="flat">
-            <v-icon color="primary"> mdi-pencil </v-icon>
-          </v-btn>
-
-          <v-btn size="small" icon variant="flat">
-            <v-icon color="primary"> mdi-delete </v-icon>
-          </v-btn>
 
           <!-- <v-btn icon variant="flat">
           <v-icon color="primary"> mdi-dots-vertical </v-icon>
@@ -81,10 +74,10 @@ const headers = ref([
     sortable: false,
     key: "id",
   },
-  { title: "Nom", width: "25%", key: "nom", align: "start" },
+  { title: "Campagne", width: "25%", key: "nom", align: "start" },
 
   {
-    title: "Intitulé du poste",
+    title: "Nombre de collaborateurs",
     width: "25%",
     key: "intitule_poste",
     align: "start",

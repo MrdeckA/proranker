@@ -2,7 +2,7 @@
   <v-container>
     <v-card flat border>
       <v-card-title class="d-flex align-center pe-2">
-        <v-icon icon="mdi-video-input-component"></v-icon>
+        <v-icon icon="mdi-view-list"></v-icon>
         <span class="ms-5">Liste des Recrutements</span>
 
         <v-spacer></v-spacer>
@@ -19,7 +19,7 @@
           class="me-5"
         ></v-text-field>
 
-        <v-btn :to="'/campaigns/add'" color="primary"
+        <v-btn :to="'/recruitments/add'" color="primary"
           >Ajouter un Recrutement</v-btn
         >
       </v-card-title>
@@ -47,7 +47,11 @@
         </v-btn> -->
         </template>
         <template #item.action="{ item }">
-          <v-btn size="small" :to="`/campaigns/${item.id}`" icon variant="flat"
+          <v-btn
+            size="small"
+            :to="`/recruitments/${item.id}`"
+            icon
+            variant="flat"
             ><v-icon color="primary"> mdi-eye </v-icon></v-btn
           >
           <v-btn size="small" icon variant="flat">

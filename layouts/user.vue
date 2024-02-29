@@ -34,8 +34,8 @@
 
       <v-app-bar-title>Tableau de bord</v-app-bar-title>
       <v-btn prepend-icon="mdi-home" class="me-5">Accueil</v-btn>
-      <v-btn prepend-icon="mdi-bell" class="me-5">Notification</v-btn>
-      <v-avatar color="primary" class="me-5"> CJ </v-avatar>
+      <!-- <v-btn prepend-icon="mdi-bell" class="me-5">Notification</v-btn> -->
+      <v-avatar color="primary" class="me-5">JD</v-avatar>
 
       <template #append>
         <v-btn icon><v-icon size="35">mdi-power</v-icon></v-btn>

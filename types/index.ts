@@ -47,7 +47,6 @@ export interface Collaborateur {
   campagne?: Campagne;
 }
 
-export type TUser = Omit<models.User, "prototype">;
 export type ErrorMessages = Record<string, string[]>;
 export type DRFValidationError = Record<string, string[]>;
 
@@ -67,3 +66,4 @@ export type SideNavigationRoute = {
 };
 
 export type TAgency = Omit<models.Agency, "prototype">;
+export type TUser = Omit<models.User, "prototype">;

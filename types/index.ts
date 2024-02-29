@@ -65,3 +65,5 @@ export type SideNavigationRoute = {
   path: DynamicPath;
   icon: string;
 };
+
+export type TAgency = Omit<models.Agency, "prototype">;

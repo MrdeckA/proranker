@@ -13,13 +13,13 @@ export const NAVIGATION_DRAWER_ROUTES = [
   },
 
   {
-    title: "Campagnes",
-    path: "/campaigns",
+    title: "Recrutements",
+    path: "/recruitments",
     icon: "mdi-view-dashboard",
   },
   {
-    title: "Mes fichiers",
-    path: "/myfiles",
+    title: "Fichiers",
+    path: "/files",
     icon: "mdi-view-dashboard",
   },
   {
@@ -37,11 +37,11 @@ export const NAVIGATION_DRAWER_ROUTES = [
   //   path: "/settings",
   //   icon: "mdi-view-dashboard",
   // },
-  {
-    title: "Déconnexion",
-    path: "/settings",
-    icon: "mdi-view-dashboard",
-  },
+  // {
+  //   title: "Déconnexion",
+  //   path: "/settings",
+  //   icon: "mdi-view-dashboard",
+  // },
 ];
 
 export const AppPublicRoutes = ["index", "about", "auth"];

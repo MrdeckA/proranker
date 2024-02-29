@@ -31,6 +31,7 @@
     "string-similarity": "^4.0.4",
     "vite-plugin-vuetify": "^2.0.1",
     "vue": "^3.4.15",
+    "vue-number-animation": "^2.0.2",
     "vue-router": "^4.2.5",
     "vue3-toastify": "^0.2.1",
     "vuetify": "^3.5.3"

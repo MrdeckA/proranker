@@ -17,12 +17,44 @@
           <h1 class="text-center text-h5 font-weight-bold text-primary">
             {{ isRegistering ? `INSCRIPTION` : `CONNEXION` }}
           </h1>
-          <div class="mt-5 mb-1">
+          <div class="mt-5 mb-1" v-if="isRegistering">
+            <div class="text-subtitle-1">Nom</div>
+
+            <v-text-field
+              density="compact"
+              placeholder="Saisissez votre nom"
+              prepend-inner-icon="mdi-account"
+              variant="outlined"
+              autocomplete="email"
+              id="email"
+              autocapitalize="off"
+              v-model="user.email"
+              required
+              :rules="rules"
+            ></v-text-field>
+          </div>
+          <div class="mt-0 mb-0" v-if="isRegistering">
+            <div class="text-subtitle-1">Prénom</div>
+
+            <v-text-field
+              density="compact"
+              placeholder="Saisissez votre prénom"
+              prepend-inner-icon="mdi-account"
+              variant="outlined"
+              autocomplete="email"
+              id="email"
+              autocapitalize="off"
+              v-model="user.email"
+              required
+              :rules="rules"
+            ></v-text-field>
+          </div>
+          <div class="mt-0 mb-0">
             <div class="text-subtitle-1">Email</div>
 
             <v-text-field
               density="compact"
-              placeholder="Addresse Email"
+              placeholder="Entrez votre addresse Email"
               prepend-inner-icon="mdi-email-outline"
               variant="outlined"
               autocomplete="email"

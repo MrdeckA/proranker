@@ -7,7 +7,7 @@ export const LIGHT_THEME = "light";
 export const light: ThemeDefinition = {
   dark: false,
   colors: {
-    primary: colors.red.darken4,
+    primary: colors.deepPurple.accent4,
     // background: "#FFFFFF",
     // surface: "#FFFFFF",
     // secondary: twColors.purple[600],

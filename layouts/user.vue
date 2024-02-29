@@ -6,9 +6,15 @@
         <v-list-item>
           <!-- <img height="60em" src="@/assets/images/logo.png" alt="logo" /> -->
 
-          <v-btn variant="text" prepend-icon="mdi-account"
-            ><h1 class="text-center text-h5">PRORANKER</h1></v-btn
+          <v-btn variant="text" class="mb-5 mt-2">
+            <template #prepend>
+              <v-icon size="50" icon="mdi-professional-hexagon"></v-icon>
+            </template>
+            <h1 class="text-center text-h5">PRORANKER</h1></v-btn
           >
+
+          <!-- <v-icon size="50" color="primary">mdi-professional-hexagon</v-icon> -->
+          <!-- <span class="app_title">PRORANKER</span> -->
         </v-list-item>
       </v-list>
 
@@ -26,7 +32,7 @@
     <v-app-bar>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-app-bar-title>Dahsboard</v-app-bar-title>
+      <v-app-bar-title>Tableau de bord</v-app-bar-title>
       <v-btn prepend-icon="mdi-home" class="me-5">Accueil</v-btn>
       <v-btn prepend-icon="mdi-bell" class="me-5">Notification</v-btn>
       <v-avatar color="primary" class="me-5"> CJ </v-avatar>

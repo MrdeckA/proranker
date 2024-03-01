@@ -12,16 +12,17 @@ export type BaseHttpGetOptions = {
 export interface Campagne {
   id?: number;
   nom?: string;
-  description?: string;
+  description_poste?: string;
   intitule_poste?: string;
   minimum_number_of_languages?: number;
   minimum_number_of_experiences?: number;
   minimum_number_of_years_of_experience?: number;
   minimum_degree?: string;
-  languages?: string | null;
-  skills?: string | null;
+  languages?: string[];
+  skills?: string[];
   has_awards?: boolean;
   has_certifications?: boolean;
+  fichiers?: File[];
 }
 
 export interface Candidat {

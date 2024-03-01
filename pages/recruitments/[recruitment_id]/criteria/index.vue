@@ -325,4 +325,6 @@ async function init() {
   }
 }
 await init();*/
+
+const search = ref("");
 </script>

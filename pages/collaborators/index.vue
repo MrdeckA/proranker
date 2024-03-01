@@ -19,13 +19,13 @@
           class="me-5"
         ></v-text-field>
 
-        <v-btn :to="'/campaigns/add'" color="primary"
-          >Ajouter un Recrutement</v-btn
+        <v-btn @click="onCollaboratorAddClick" color="primary"
+          >Ajouter un collaborateur</v-btn
         >
       </v-card-title>
 
       <v-divider></v-divider>
-      <v-data-table-server
+      <v-data-table
         class="border shadow-lg"
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
@@ -46,17 +46,96 @@
           <v-icon color="primary"> mdi-dots-vertical </v-icon>
         </v-btn> -->
         </template>
-        <template #item.action="{ item }">
-          <v-btn size="small" :to="`/campaigns/${item.id}`" icon variant="flat"
+        <template #item.action="{ item, index }">
+          <v-btn
+            size="small"
+            @click="openFormDialogForCampagne(item, index)"
+            icon
+            variant="flat"
             ><v-icon color="primary"> mdi-eye </v-icon></v-btn
           >
 
           <!-- <v-btn icon variant="flat">
           <v-icon color="primary"> mdi-dots-vertical </v-icon>
         </v-btn> -->
-        </template></v-data-table-server
+        </template></v-data-table
       ></v-card
     >
+    <v-dialog v-model="openFormDialog" width="750">
+      <template v-slot:default="{ isActive }">
+        <v-container>
+          <v-card class="px-0" :title="`Collaborateurs de la campagne`">
+            <v-form @submit.prevent="console.log('v')">
+              <v-row class="mx-2">
+                <v-col cols="12">
+                  <v-autocomplete
+                    variant="outlined"
+                    label="Recrutement"
+                    :items="campagnesList"
+                    item-title="nom"
+                    item-value="id"
+                    v-model="selectedCampagne"
+                  ></v-autocomplete>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    variant="outlined"
+                    label="Adresse email du collaborateur. Ex : email@gmail.com"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col class="text-center">
+                  <v-btn class="mt-3" color="primary">Inviter</v-btn>
+                </v-col>
+              </v-row>
+              <!-- <div class="text-center">
+                <v-btn
+                  class="ma-5"
+                  color="primary"
+                  @click="openFormDialog = false"
+                  >Ok</v-btn
+                >
+              </div> -->
+            </v-form>
+
+            <v-col>
+              <v-list>
+                <v-list-subheader>
+                  <h2>Collaborateurs</h2>
+                  <!-- <v-btn
+                @click="openFormDialog = true"
+                class="ms-5"
+                color="primary"
+                size="x-small"
+                icon
+                ><v-icon>mdi-plus</v-icon></v-btn
+              > -->
+                </v-list-subheader>
+
+                <v-list-item
+                  v-for="(item, key) in serverItems[selectedCampagneIndex]
+                    .collaborateurs"
+                >
+                  <v-list>
+                    <v-list-item
+                      :title="`Nom : ${item.user_full_name}`"
+                      :subtitle="`Role : ${item.role}`"
+                    >
+                      Statut invitation :
+                      {{ item.statut_invitation }}
+                    </v-list-item>
+                  </v-list>
+
+                  <template #append>
+                    <v-btn icon="mdi-delete" variant="text"></v-btn>
+                  </template>
+                </v-list-item>
+              </v-list>
+            </v-col>
+          </v-card>
+        </v-container>
+      </template>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -65,6 +144,7 @@ definePageMeta({
   layout: "user",
 });
 const route = useRoute();
+const openFormDialog = ref(false);
 
 const serverItems = ref([] as any[]);
 const headers = ref([
@@ -74,30 +154,73 @@ const headers = ref([
     sortable: false,
     key: "id",
   },
-  { title: "Campagne", width: "25%", key: "nom", align: "start" },
+  { title: "Campagne", width: "25%", key: "nom_campagne", align: "start" },
 
   {
     title: "Nombre de collaborateurs",
     width: "25%",
-    key: "intitule_poste",
+    key: "total",
     align: "start",
   },
   { title: "Action", key: "action", align: "center" },
 ]);
 
 const { data, pending, error, refresh, execute, status } = await useFetch(
-  "http://127.0.0.1:8000/api/campagnes/"
+  "http://127.0.0.1:8000/api/liste-campagnes-collaborateurs/?user=1"
 );
 
+const totalItems = ref(0);
+const itemsPerPage = ref(10);
+const search = ref("");
 if (data.value) {
   console.log(data.value);
   serverItems.value = data.value;
+  totalItems.value = data.value.length;
 }
 
 if (error.value) {
-  // console.log("error : ", error.value?.data);
+  console.log("error : ", error.value?.data);
   console.log(error.value);
 }
+const selectedCampagneIndex = ref(0);
+function openFormDialogForCampagne(item: any, index: number) {
+  selectedCampagne.value = item;
+  selectedCampagneIndex.value = index;
+  console.log(index);
+  openFormDialog.value = true;
+}
+
+const campagnesList = ref([] as never[]);
+onBeforeMount(async () => {
+  const { data: resData, error: resError } = await useFetch(
+    "http://127.0.0.1:8000/api/campagnes/",
+    {
+      query: {
+        user: "1",
+      },
+
+      onRequest({ request, options }) {
+        //
+      },
+    }
+  );
+
+  const selectedCampagne = ref();
+
+  if (resData.value) {
+    campagnesList.value = resData.value;
+    console.log(data.value);
+  }
+
+  if (resError.value) {
+    console.log("error : ", error.value?.data);
+    console.log(error.value);
+  }
+});
+
+const onCollaboratorAddClick = () => {
+  openFormDialog.value = true;
+};
 </script>
 <script lang="ts">
 const desserts = [
@@ -182,13 +305,4 @@ const desserts = [
     iron: "22",
   },
 ];
-
-export default {
-  data: () => ({
-    itemsPerPage: 5,
-
-    search: "",
-    totalItems: 0,
-  }),
-};
 </script>

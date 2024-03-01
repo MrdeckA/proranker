@@ -25,7 +25,7 @@
       </v-card-title>
 
       <v-divider></v-divider>
-      <v-data-table-server
+      <v-data-table
         class="border shadow-lg"
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
@@ -65,7 +65,7 @@
           <!-- <v-btn icon variant="flat">
           <v-icon color="primary"> mdi-dots-vertical </v-icon>
         </v-btn> -->
-        </template></v-data-table-server
+        </template></v-data-table
       ></v-card
     >
   </v-container>

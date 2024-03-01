@@ -25,7 +25,7 @@
       </v-card-title>
 
       <v-divider></v-divider>
-      <v-data-table-server
+      <v-data-table
         class="border shadow-lg"
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
@@ -40,6 +40,12 @@
           <v-icon color="primary"> mdi-dots-vertical </v-icon>
         </v-btn> -->
         </template>
+        <template #item.numberoffiles="{ item }">
+          <span class="text-truncate">{{ item.files.length }}</span>
+          <!-- <v-btn icon variant="flat">
+          <v-icon color="primary"> mdi-dots-vertical </v-icon>
+        </v-btn> -->
+        </template>
         <template #item.id="{ item, index }">
           <span class="text-truncate">{{ index + 1 }}</span>
           <!-- <v-btn icon variant="flat">
@@ -47,14 +53,14 @@
         </v-btn> -->
         </template>
         <template #item.action="{ item }">
-          <v-btn size="small" :to="`/campaigns/${item.id}`" icon variant="flat"
+          <v-btn size="small" :to="`/files/${item.id}`" icon variant="flat"
             ><v-icon color="primary"> mdi-eye </v-icon></v-btn
           >
 
           <!-- <v-btn icon variant="flat">
           <v-icon color="primary"> mdi-dots-vertical </v-icon>
         </v-btn> -->
-        </template></v-data-table-server
+        </template></v-data-table
       ></v-card
     >
   </v-container>
@@ -79,7 +85,7 @@ const headers = ref([
   {
     title: "Nombre de fichiers",
     width: "25%",
-    key: "intitule_poste",
+    key: "numberoffiles",
     align: "start",
   },
   { title: "Action", key: "action", align: "center" },

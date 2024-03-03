@@ -166,27 +166,15 @@
                 </v-col>
                 <v-col>
                   <!--new-->
+
                   <v-autocomplete
-                    v-if="campagneToEditType === 'A des prix'"
-                    v-model="campagneToEdit.has_awards"
+                    v-if="campagneToEditType === 'Certifications'"
+                    v-model="campagneToEdit.certifications"
                     label="Valeur"
                     variant="outlined"
                     density="comfortable"
-                    :items="binariesItems"
-                    item-title="label"
-                    item-value="value"
-                    required
-                  >
-                  </v-autocomplete>
-                  <v-autocomplete
-                    v-if="campagneToEditType === 'A des certifications'"
-                    v-model="campagneToEdit.has_certifications"
-                    label="Valeur"
-                    variant="outlined"
-                    density="comfortable"
-                    :items="binariesItems"
-                    item-title="label"
-                    item-value="value"
+                    :items="['google', 'cisco', 'amazon', 'facebook']"
+                    multiple
                     required
                   >
                   </v-autocomplete>
@@ -290,9 +278,8 @@ const route = useRoute();
 
 const criteriaTypes = ref(
   [
-    "A des prix",
     "Nombre minimum d'expériences",
-    "A des certifications",
+    "Certifications",
     "Compétences",
     "Langues",
     "Nombre minimum de langues",
@@ -369,8 +356,7 @@ enum Correspondance {
   "Diplome minimum" = "minimum_degree",
   "Langues" = "languages",
   "Compétences" = "skills",
-  "A des prix" = "has_awards",
-  "A des certifications" = "has_certifications",
+  "certifications" = "certifications",
 }
 
 watch(campagneToEdit.value, () => {

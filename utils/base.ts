@@ -14,9 +14,8 @@ export const isEmptyObject = (object?: unknown) => {
   );
 };
 
-export function isLink(str: string) {
+export function isLink(str: string): string {
   const linkRegex = /^(ftp|http|https):\/\/[^ "]+$/;
 
-  return linkRegex.test(str);
+  return "fff";
 }
-

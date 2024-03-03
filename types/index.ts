@@ -23,6 +23,7 @@ export interface Campagne {
   has_awards?: boolean;
   has_certifications?: boolean;
   fichiers?: File[];
+  certifications?: string[];
 }
 
 export interface Candidat {

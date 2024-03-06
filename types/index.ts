@@ -17,13 +17,14 @@ export interface Campagne {
   minimum_number_of_languages?: number;
   minimum_number_of_experiences?: number;
   minimum_number_of_years_of_experience?: number;
-  minimum_degree?: string;
+  degrees?: string[];
   languages?: string[];
   skills?: string[];
   has_awards?: boolean;
   has_certifications?: boolean;
   fichiers?: File[];
   certifications?: string[];
+  numberoffiles?: Number;
 }
 
 export interface Candidat {

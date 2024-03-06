@@ -9,7 +9,7 @@ export const NAVIGATION_DRAWER_ROUTES = [
   {
     title: "Tableau de bord",
     path: "/dashboard",
-    icon: "mdi-view-dashboard",
+    icon: "mdi-home",
   },
 
   {
@@ -20,17 +20,17 @@ export const NAVIGATION_DRAWER_ROUTES = [
   {
     title: "Fichiers",
     path: "/files",
-    icon: "mdi-view-dashboard",
+    icon: "mdi-file-pdf-box",
   },
   {
     title: "Collaborateurs",
     path: "/collaborators",
-    icon: "mdi-view-dashboard",
+    icon: "mdi-account-group",
   },
   {
     title: "Mon Profil",
     path: "/profile",
-    icon: "mdi-view-dashboard",
+    icon: "mdi-account",
   },
   // {
   //   title: "Paramètres",

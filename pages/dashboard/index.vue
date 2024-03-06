@@ -2,8 +2,8 @@
   <v-container>
     <h1 class="text-center mt-5 mb-10">Statistiques globales</h1>
     <v-row>
-      <v-col cols="4">
-        <v-card class="mx-auto" prepend-icon="mdi-home">
+      <v-col cols="3">
+        <v-card class="mx-auto" prepend-icon="mdi-view-dashboard">
           <template #text>
             <div class="stats-number">
               <number-animation
@@ -19,25 +19,8 @@
           <template v-slot:title>Recrutements</template>
         </v-card>
       </v-col>
-      <v-col cols="4">
-        <v-card class="mx-auto" prepend-icon="mdi-home">
-          <template #text>
-            <div class="stats-number">
-              <number-animation
-                :from="0"
-                :to="stats.files"
-                :duration="1"
-                autoplay
-                easing="linear"
-                :format="formatValue"
-              />
-            </div>
-          </template>
-          <template v-slot:title>Collaborateurs</template>
-        </v-card>
-      </v-col>
-      <v-col cols="4">
-        <v-card class="mx-auto" prepend-icon="mdi-home">
+      <v-col cols="3">
+        <v-card class="mx-auto" prepend-icon="mdi-account-group">
           <template #text>
             <div class="stats-number">
               <number-animation
@@ -50,33 +33,17 @@
               />
             </div>
           </template>
-          <template v-slot:title>Classements en cours</template>
+          <template v-slot:title>Collaborateurs</template>
         </v-card>
       </v-col>
-      <v-col cols="4">
-        <v-card class="mx-auto" prepend-icon="mdi-home">
+
+      <v-col cols="3">
+        <v-card class="mx-auto" prepend-icon="mdi-file">
           <template #text>
             <div class="stats-number">
               <number-animation
                 :from="0"
-                :to="stats.inProgressRanking"
-                :duration="1"
-                autoplay
-                easing="linear"
-                :format="formatValue"
-              />
-            </div>
-          </template>
-          <template v-slot:title>Classements achevés</template>
-        </v-card>
-      </v-col>
-      <v-col cols="4">
-        <v-card class="mx-auto" prepend-icon="mdi-home">
-          <template #text>
-            <div class="stats-number">
-              <number-animation
-                :from="0"
-                :to="stats.endedRanking"
+                :to="stats.files"
                 :duration="1"
                 autoplay
                 easing="linear"
@@ -87,8 +54,8 @@
           <template v-slot:title>Fichiers</template>
         </v-card>
       </v-col>
-      <v-col cols="4">
-        <v-card class="mx-auto" prepend-icon="mdi-home">
+      <v-col cols="3">
+        <v-card class="mx-auto" prepend-icon="mdi-account-multiple">
           <template #text>
             <div class="stats-number">
               <number-animation

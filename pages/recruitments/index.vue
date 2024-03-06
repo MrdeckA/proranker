@@ -11,7 +11,7 @@
           v-model="search"
           prepend-inner-icon="mdi-magnify"
           density="compact"
-          label="Search"
+          label="Recherche"
           single-line
           flat
           hide-details
@@ -20,7 +20,7 @@
         ></v-text-field>
 
         <v-btn :to="'/recruitments/add'" color="primary"
-          >Ajouter un Recrutement</v-btn
+          >Nouveau Recrutement</v-btn
         >
       </v-card-title>
 
@@ -29,8 +29,8 @@
         class="border shadow-lg"
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
-        :items-length="totalItems"
-        :items="serverItems"
+        :items-length="mocks.length"
+        :items="mocks"
         :search="search"
         item-value="name"
       >
@@ -109,97 +109,79 @@ if (error.value) {
   // console.log("error : ", error.value?.data);
   console.log(error.value);
 }
-</script>
-<script lang="ts">
-const desserts = [
+
+const mocks = [
   {
-    name: "Frozen Yogurt",
-    calories: 159,
-    fat: 6.0,
-    carbs: 24,
-    protein: 4.0,
-    iron: "1",
+    nom: "Recrutement développeur Blockchain",
+    description_poste:
+      "Contribuez à la conception et au développement de solutions blockchain innovantes.",
+    intitule_poste: "Développeur Blockchain",
+    minimum_number_of_languages: 2,
+    minimum_number_of_experiences: 3,
+    minimum_degree: "Bac+4 en informatique",
+    languages: "Solidity, JavaScript",
+    certifications: "Certification Ethereum Developer",
+    skills: "Smart Contracts, Développement d'applications décentralisées",
+    user: 6,
+    files: ["CV.pdf", "Lettre_motivation.pdf"],
   },
   {
-    name: "Jelly bean",
-    calories: 375,
-    fat: 0.0,
-    carbs: 94,
-    protein: 0.0,
-    iron: "0",
+    nom: "Recrutement ingénieur en intelligence artificielle",
+    description_poste:
+      "Participez à la conception et à l'implémentation de solutions d'intelligence artificielle avancées.",
+    intitule_poste: "Ingénieur IA",
+    minimum_number_of_languages: 3,
+    minimum_number_of_experiences: 4,
+    minimum_degree: "Bac+5 en intelligence artificielle",
+    languages: "Python, TensorFlow, PyTorch",
+    certifications: "Certification Machine Learning",
+    skills: "Apprentissage profond, Traitement du langage naturel",
+    user: 7,
+    files: ["CV.pdf", "Lettre_motivation.pdf"],
   },
   {
-    name: "KitKat",
-    calories: 518,
-    fat: 26.0,
-    carbs: 65,
-    protein: 7,
-    iron: "6",
+    nom: "Recrutement architecte cloud",
+    description_poste:
+      "Concevez et implémentez des solutions cloud robustes pour répondre aux besoins de l'entreprise.",
+    intitule_poste: "Architecte Cloud",
+    minimum_number_of_languages: 2,
+    minimum_number_of_experiences: 5,
+    minimum_degree: "Bac+4 en informatique",
+    languages: "Java, Python",
+    certifications: "Certification AWS Solutions Architect",
+    skills: "Architecture cloud, Déploiement automatisé",
+    user: 8,
+    files: ["CV.pdf", "Lettre_motivation.pdf"],
   },
   {
-    name: "Eclair",
-    calories: 262,
-    fat: 16.0,
-    carbs: 23,
-    protein: 6.0,
-    iron: "7",
+    nom: "Recrutement analyste en cybersécurité",
+    description_poste:
+      "Assurez la sécurité des systèmes informatiques en identifiant et en prévenant les menaces potentielles.",
+    intitule_poste: "Analyste Cybersécurité",
+    minimum_number_of_languages: 2,
+    minimum_number_of_experiences: 4,
+    minimum_degree: "Bac+5 en cybersécurité",
+    languages: "Python, C, C++",
+    certifications: "Certification CISSP, Certification CEH",
+    skills: "Analyse des vulnérabilités, Gestion des incidents",
+    user: 9,
+    files: ["CV.pdf", "Lettre_motivation.pdf"],
   },
   {
-    name: "Gingerbread",
-    calories: 356,
-    fat: 16.0,
-    carbs: 49,
-    protein: 3.9,
-    iron: "16",
-  },
-  {
-    name: "Ice cream sandwich",
-    calories: 237,
-    fat: 9.0,
-    carbs: 37,
-    protein: 4.3,
-    iron: "1",
-  },
-  {
-    name: "Lollipop",
-    calories: 392,
-    fat: 0.2,
-    carbs: 98,
-    protein: 0,
-    iron: "2",
-  },
-  {
-    name: "Cupcake",
-    calories: 305,
-    fat: 3.7,
-    carbs: 67,
-    protein: 4.3,
-    iron: "8",
-  },
-  {
-    name: "Honeycomb",
-    calories: 408,
-    fat: 3.2,
-    carbs: 87,
-    protein: 6.5,
-    iron: "45",
-  },
-  {
-    name: "Donut",
-    calories: 452,
-    fat: 25.0,
-    carbs: 51,
-    protein: 4.9,
-    iron: "22",
+    nom: "Recrutement développeur DevOps",
+    description_poste:
+      "Automatisez les processus de développement, de déploiement et de gestion d'infrastructures.",
+    intitule_poste: "Développeur DevOps",
+    minimum_number_of_languages: 2,
+    minimum_number_of_experiences: 3,
+    minimum_degree: "Bac+3 en informatique",
+    languages: "Shell, Python",
+    certifications: "Certification DevOps",
+    skills: "Automatisation, CI/CD, Gestion d'infrastructures",
+    user: 10,
+    files: ["CV.pdf", "Lettre_motivation.pdf"],
   },
 ];
-
-export default {
-  data: () => ({
-    itemsPerPage: 5,
-
-    search: "",
-    totalItems: 0,
-  }),
-};
+const itemsPerPage = ref(15);
+const search = ref("");
 </script>

@@ -31,11 +31,12 @@
 
     <v-app-bar>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <!-- icon="mdi-arrow-left" -->
 
-      <v-app-bar-title>Tableau de bord</v-app-bar-title>
+      <v-app-bar-title>Collaborateurs</v-app-bar-title>
       <v-btn prepend-icon="mdi-home" class="me-5">Accueil</v-btn>
       <!-- <v-btn prepend-icon="mdi-bell" class="me-5">Notification</v-btn> -->
-      <v-avatar color="primary" class="me-5">JD</v-avatar>
+      <v-avatar color="primary" class="me-5">MA</v-avatar>
 
       <template #append>
         <v-btn icon><v-icon size="35">mdi-power</v-icon></v-btn>

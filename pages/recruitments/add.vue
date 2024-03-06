@@ -16,11 +16,11 @@
           ></v-text-field
         ></v-col>
         <v-col>
-          <v-text-field
+          <v-textarea
             v-model="campagneToEdit.description_poste"
             label="Description du poste"
             variant="outlined"
-          ></v-text-field
+          ></v-textarea
         ></v-col>
 
         <v-col>
@@ -28,7 +28,7 @@
             v-model="campagneToEdit.fichiers"
             color="primary"
             counter
-            label="Fichier des CV"
+            label="Fichiers des CV"
             placeholder="Sélectionner vos cv"
             prepend-icon="mdi-paperclip"
             variant="outlined"
@@ -56,13 +56,13 @@
                   v-else-if="index === 2"
                   class="text-overline text-grey-darken-3 mx-2"
                 >
-                  +{{ campagneToEdit?.fichiers?.length - 2 }} File(s)
+                  +{{ campagneToEdit?.fichiers?.length - 2 }} Fichiers(s)
                 </span>
               </template>
             </template>
           </v-file-input>
         </v-col>
-        <v-col>
+        <v-col class="border">
           <v-list>
             <v-list-subheader
               >Critères
@@ -76,8 +76,16 @@
               ></v-list-subheader
             >
 
-            <v-list-item v-if="isDefinedValue(campagneToEdit.minimum_degree)"
-              >Diplome minimum : {{ campagneToEdit.minimum_degree }}
+            <v-list-item v-if="isDefinedValue(campagneToEdit.certifications)"
+              >Certifications : {{ campagneToEdit.certifications }}
+
+              <template #append>
+                <v-btn variant="text" size="small" icon="mdi-delete"></v-btn>
+              </template>
+            </v-list-item>
+
+            <v-list-item v-if="isDefinedValue(campagneToEdit.degrees)"
+              >Diplomes : {{ campagneToEdit.degrees }}
 
               <template #append>
                 <v-btn variant="text" size="small" icon="mdi-delete"></v-btn>
@@ -144,14 +152,14 @@
       <template v-slot:default="{ isActive }">
         <v-container>
           <v-card class="px-0" title="Ajout d'un nouveau critère">
-            <template #append>
+            <!-- <template #append>
               <v-btn
                 class="ma-2"
                 color="primary"
                 @click="isActive.value = false"
                 >Retour</v-btn
               >
-            </template>
+            </template> -->
             <v-form @submit.prevent="onNewCriteriaFormSubmit">
               <v-row class="mx-2">
                 <v-col>
@@ -173,7 +181,13 @@
                     label="Valeur"
                     variant="outlined"
                     density="comfortable"
-                    :items="['google', 'cisco', 'amazon', 'facebook']"
+                    :items="[
+                      'google',
+                      'cisco',
+                      'amazon',
+                      'facebook',
+                      'Blockchain developper',
+                    ]"
                     multiple
                     required
                   >
@@ -185,19 +199,28 @@
                     label="Valeur"
                     variant="outlined"
                     density="comfortable"
-                    :items="['Java', 'Python', 'C', 'C++']"
+                    :items="[
+                      'Java',
+                      'Python',
+                      'C',
+                      'C++',
+                      'ethers.js',
+                      'IPFS',
+                      'Web3.js',
+                    ]"
                     multiple
                     required
                   >
                   </v-autocomplete>
 
                   <v-autocomplete
-                    v-if="campagneToEditType === 'Diplome minimum'"
-                    v-model="campagneToEdit.minimum_degree"
+                    v-if="campagneToEditType === 'Diplomes'"
+                    v-model="campagneToEdit.degrees"
                     label="Valeur"
                     variant="outlined"
                     density="comfortable"
                     :items="['BAC', 'Licence', 'Master']"
+                    multiple
                     required
                   >
                   </v-autocomplete>
@@ -208,7 +231,7 @@
                     label="Valeur"
                     variant="outlined"
                     density="comfortable"
-                    :items="['Français', 'Anglais', 'Chinois']"
+                    :items="['Français', 'Anglais', 'Mandarin', 'Espagnol']"
                     multiple
                     required
                   >
@@ -283,7 +306,7 @@ const criteriaTypes = ref(
     "Compétences",
     "Langues",
     "Nombre minimum de langues",
-    "Diplome minimum",
+    "Diplomes",
   ].sort()
 );
 
@@ -353,10 +376,10 @@ enum Correspondance {
   "Nombre minimum de langues" = "minimum_number_of_languages",
   "Nombre minimum d'expériences" = "minimum_number_of_experiences",
   "Nombre minimum d'années d'expérience" = "minimum_number_of_years_of_experience",
-  "Diplome minimum" = "minimum_degree",
+  "Diplomes" = "degrees",
   "Langues" = "languages",
   "Compétences" = "skills",
-  "certifications" = "certifications",
+  "Certifications" = "certifications",
 }
 
 watch(campagneToEdit.value, () => {

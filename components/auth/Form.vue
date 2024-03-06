@@ -17,43 +17,39 @@
           <h1 class="text-center text-h5 font-weight-bold text-primary">
             {{ isRegistering ? `INSCRIPTION` : `CONNEXION` }}
           </h1>
-          <div class="mt-5 mb-1" v-if="isRegistering">
-            <div class="text-subtitle-1">Nom</div>
-
+          <div class="mt-8 mb-1" v-if="isRegistering">
             <v-text-field
-              density="compact"
+              density="comfortable"
               placeholder="Saisissez votre nom"
               prepend-inner-icon="mdi-account"
               variant="outlined"
               autocomplete="email"
               id="email"
               autocapitalize="off"
-              v-model="user.email"
+              v-model="user.last_name"
               required
-              :rules="rules"
+              :rules="[ruleRequired]"
+              label="Nom"
             ></v-text-field>
           </div>
           <div class="mt-0 mb-0" v-if="isRegistering">
-            <div class="text-subtitle-1">Prénom</div>
-
             <v-text-field
-              density="compact"
+              density="comfortable"
               placeholder="Saisissez votre prénom"
               prepend-inner-icon="mdi-account"
               variant="outlined"
               autocomplete="email"
               id="email"
               autocapitalize="off"
-              v-model="user.email"
+              v-model="user.first_name"
               required
-              :rules="rules"
+              :rules="[ruleRequired]"
+              label="Prénom"
             ></v-text-field>
           </div>
-          <div class="mt-0 mb-0">
-            <div class="text-subtitle-1">Email</div>
-
+          <div class="mb-0" :class="isRegistering ? 'mt-0' : 'mt-8'">
             <v-text-field
-              density="compact"
+              density="comfortable"
               placeholder="Entrez votre addresse Email"
               prepend-inner-icon="mdi-email-outline"
               variant="outlined"
@@ -63,6 +59,7 @@
               v-model="user.email"
               required
               :rules="rules"
+              label="Email"
             ></v-text-field>
           </div>
 
@@ -70,11 +67,10 @@
             <div
               class="text-subtitle-1 d-flex align-center justify-space-between"
             >
-              Mot de Passe
-
+              <div></div>
               <a
                 v-if="!isRegistering"
-                class="text-caption text-decoration-none text-primary"
+                class="text-caption text-decoration-none text-primary mb-2"
                 href="#"
                 rel="noopener noreferrer"
                 target="_blank"
@@ -83,9 +79,9 @@
             </div>
 
             <v-text-field
+              density="comfortable"
               :append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
               :type="visible ? 'text' : 'password'"
-              density="compact"
               placeholder="Entrez votre mot de passe"
               prepend-inner-icon="mdi-lock-outline"
               variant="outlined"
@@ -95,34 +91,30 @@
               v-model="user.password"
               required
               :rules="password_rules"
+              label="Mot de passe"
             ></v-text-field>
           </div>
 
           <div v-if="isRegistering" class="mb-5">
-            <div
-              class="text-subtitle-1 d-flex align-center justify-space-between"
-            >
-              Confirmation
-            </div>
-
             <v-text-field
+              density="comfortable"
               :append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
               :type="visible ? 'text' : 'password'"
-              density="compact"
               placeholder="Confirmez le mot de passe"
-              prepend-inner-icon="mdi-lock-outline"
+              prepend-inner-icon="mdi-lock-check-outline"
               variant="outlined"
               @click:append-inner="visible = !visible"
               v-model="user.confirmation_passsword"
               :rules="password_rules"
               autocomplete="confirm-password"
+              label="Confirmation mot de passe"
             ></v-text-field>
           </div>
 
           <v-btn
             type="submit"
             block
-            class="mb-5"
+            class="my-6"
             color="primary"
             size="large"
             :loading="isFetching"
@@ -148,6 +140,7 @@
 <script lang="ts" setup>
 import type { TUser, ErrorMessages } from "@/types";
 import mobile from "is-mobile";
+import { ruleRequired } from "@/helpers/rules";
 
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/store";

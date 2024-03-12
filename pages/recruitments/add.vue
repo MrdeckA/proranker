@@ -297,8 +297,10 @@ import { isUndefined, isNull } from "lodash";
 definePageMeta({
   layout: "user",
 });
-const route = useRoute();
 
+const { $toast } = useNuxtApp();
+const route = useRoute();
+const router = useRouter();
 const criteriaTypes = ref(
   [
     "Nombre minimum d'expériences",
@@ -360,7 +362,8 @@ const onRecruitmentFormSumbit = async () => {
   await axios
     .post("http://127.0.0.1:8000/api/campagnes/", data, config)
     .then((response) => {
-      console.log(JSON.stringify(response.data));
+      router.push(`/recruitments/${response.data.campagne.id}?created=true`);
+      console.log(response.data);
     })
     .catch((error) => {
       console.log(error);

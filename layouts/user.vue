@@ -30,10 +30,13 @@
     </v-navigation-drawer>
 
     <v-app-bar>
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        icon="mdi-arrow-left"
+        @click="drawer = !drawer"
+      ></v-app-bar-nav-icon>
       <!-- icon="mdi-arrow-left" -->
 
-      <v-app-bar-title>Collaborateurs</v-app-bar-title>
+      <v-app-bar-title>Recrutements</v-app-bar-title>
       <v-btn prepend-icon="mdi-home" class="me-5">Accueil</v-btn>
       <!-- <v-btn prepend-icon="mdi-bell" class="me-5">Notification</v-btn> -->
       <v-avatar color="primary" class="me-5">MA</v-avatar>

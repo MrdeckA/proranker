@@ -29,8 +29,8 @@
         class="border shadow-lg"
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
-        :items-length="mocks.length"
-        :items="mocks"
+        :items-length="serverItems.length"
+        :items="serverItems"
         :search="search"
         item-value="name"
       >

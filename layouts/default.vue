@@ -3,48 +3,43 @@
 <template>
   <v-layout>
     <v-app-bar :elevation="2">
-      <v-app-bar-title class="ms-10">
+      <v-app-bar-title class="ms-5" @click="goToHome()">
         <v-icon size="50" color="primary">mdi-professional-hexagon</v-icon>
         <span class="app_title">PRORANKER</span></v-app-bar-title
       >
       <v-spacer></v-spacer>
 
-      <div>
+      <template v-slot:append>
         <NuxtLink active-class="nuxt_link_active" to="/"
           ><v-btn
-            class="text-none text-subtitle-1"
-            variant="currentPath == '/' ? 'tonal' : 'text'"
+            variant="plain"
+            class="font-weight-bold"
+            :color="currentPath == '/' ? 'primary' : 'black'"
             >Acceuil</v-btn
           ></NuxtLink
         >
         <NuxtLink active-class="nuxt_link_active" to="/auth/login"
           ><v-btn
-            class="text-none text-subtitle-1"
-            :variant="currentPath == '/auth/login' ? 'tonal' : 'text'"
+            variant="plain"
+            :color="currentPath == '/auth/login' ? 'primary' : 'black'"
+            class="font-weight-bold"
             >Connexion</v-btn
           ></NuxtLink
         >
         <NuxtLink active-class="nuxt_link_active" to="/auth/register"
           ><v-btn
-            class="text-none text-subtitle-1"
-            :variant="currentPath == '/auth/register' ? 'tonal' : 'text'"
+            :color="currentPath == '/auth/register' ? 'primary' : 'black'"
+            variant="plain"
+            class="font-weight-bold"
             >Inscription</v-btn
           ></NuxtLink
         >
         <NuxtLink active-class="nuxt_link_active" to="/faq"
           ><v-btn
-            class="text-none text-subtitle-2"
-            :variant="currentPath == '/faq' ? 'tonal' : 'text'"
-            >FAQ</v-btn
-          ></NuxtLink
-        >
-      </div>
-      <v-spacer></v-spacer>
-
-      <template v-slot:append>
-        <NuxtLink active-class="nuxt_link_active" to="/faq"
-          ><v-btn class="text-none" variant="elevated" color="primary"
-            >Démarrer un Classement</v-btn
+            variant="plain"
+            class="font-weight-bold"
+            :color="currentPath == '/faq' ? 'primary' : 'black'"
+            >Comment ça marche ?</v-btn
           ></NuxtLink
         >
       </template>
@@ -53,7 +48,7 @@
       <slot />
     </v-main>
 
-    <v-footer class="border d-flex flex-column pa-0">
+    <v-footer class="border d-flex flex-column pa-0" app>
       <div class="bg-primary d-flex w-100 align-center px-4">
         <strong> Optimisez vos recrutements grâce à l'IA !</strong>
 
@@ -85,6 +80,7 @@ const icons = ref([
 ]);
 
 const route = useRoute();
+const router = useRouter();
 // const activeRoute = ref(object.keys(route));
 // console.log(objects.keys(route));
 const currentPath = ref(route.path);
@@ -94,10 +90,14 @@ console.log(currentPath.value);
 watch(
   () => route.path,
   () => {
-    currentPath.value = ref(route.path);
+    currentPath.value = route.path;
   }
 );
 // const currentPath =
+
+const goToHome = () => {
+  router.push("/");
+};
 </script>
 
 <style scoped>
@@ -114,6 +114,19 @@ watch(
   position: relative;
   top: 0.15em;
   left: 0.25em;
+  font-family:
+    Questrial,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif !important;
 }
 
 a {

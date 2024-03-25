@@ -24,7 +24,7 @@
               prepend-inner-icon="mdi-account"
               variant="outlined"
               autocomplete="email"
-              id="email"
+              id="last-name"
               autocapitalize="off"
               v-model="user.last_name"
               required
@@ -39,7 +39,7 @@
               prepend-inner-icon="mdi-account"
               variant="outlined"
               autocomplete="email"
-              id="email"
+              id="first-name"
               autocapitalize="off"
               v-model="user.first_name"
               required

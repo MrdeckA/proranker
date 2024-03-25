@@ -8,9 +8,6 @@
 import { type TUser } from "~/types";
 import * as Auth from "@/components/auth";
 // import { useAuthApi } from "@/composables/api";
-definePageMeta({
-  layout: "auth",
-});
 
 const user = reactive<TUser>({});
 

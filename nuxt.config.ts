@@ -13,6 +13,25 @@ export default defineNuxtConfig({
   build: {
     transpile: ["vuetify"],
   },
+  app: {
+    head: {
+      link: [
+        {
+          rel: "preconnect",
+          href: "https://fonts.googleapis.com",
+        },
+        {
+          rel: "preconnect",
+          href: "https://fonts.gstatic.com",
+        },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Questrial&display=swa",
+        },
+      ],
+    },
+  },
+
   modules: [
     async (options, nuxt) => {
       nuxt.hooks.hook("vite:extendConfig", (config) => {

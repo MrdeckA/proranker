@@ -3,29 +3,41 @@
 <template>
   <v-layout>
     <v-app-bar :elevation="2">
-      <v-app-bar-title class="ms-10">
+      <v-app-bar-title class="ms-10" @click="goToHome()">
         <v-icon size="50" color="primary">mdi-professional-hexagon</v-icon>
         <span class="app_title">PRORANKER</span></v-app-bar-title
       >
 
       <template v-slot:append>
         <NuxtLink active-class="nuxt_link_active" to="/"
-          ><v-btn :variant="currentPath == '/' ? 'tonal' : 'text'"
+          ><v-btn
+            variant="plain"
+            :color="currentPath == '/' ? 'primary' : 'black'"
+            class="font-weight-bold"
             >Acceuil</v-btn
           ></NuxtLink
         >
         <NuxtLink active-class="nuxt_link_active" to="/auth/login"
-          ><v-btn :variant="currentPath == '/auth/login' ? 'tonal' : 'text'"
+          ><v-btn
+            variant="plain"
+            :color="currentPath == '/auth/login' ? 'primary' : 'black'"
+            class="font-weight-bold"
             >Connexion</v-btn
           ></NuxtLink
         >
         <NuxtLink active-class="nuxt_link_active" to="/auth/register"
-          ><v-btn :variant="currentPath == '/auth/register' ? 'tonal' : 'text'"
+          ><v-btn
+            variant="plain"
+            :color="currentPath == '/auth/register' ? 'primary' : 'black'"
+            class="font-weight-bold"
             >Inscription</v-btn
           ></NuxtLink
         >
         <NuxtLink active-class="nuxt_link_active" to="/faq"
-          ><v-btn :variant="currentPath == '/faq' ? 'tonal' : 'text'"
+          ><v-btn
+            variant="plain"
+            class="font-weight-bold"
+            :color="currentPath == '/faq' ? 'primary' : 'black'"
             >FAQ</v-btn
           ></NuxtLink
         >
@@ -67,6 +79,7 @@ const icons = ref([
 ]);
 
 const route = useRoute();
+const router = useRouter();
 // const activeRoute = ref(object.keys(route));
 // console.log(objects.keys(route));
 const currentPath = ref(route.path);
@@ -76,10 +89,14 @@ console.log(currentPath.value);
 watch(
   () => route.path,
   () => {
-    currentPath.value = ref(route.path);
+    currentPath.value = route.path;
   }
 );
 // const currentPath =
+
+const goToHome = () => {
+  router.push("/");
+};
 </script>
 
 <style scoped>

@@ -5,9 +5,5 @@
 import type { TUser } from "~/types";
 import * as Auth from "../../components/auth";
 
-definePageMeta({
-  layout: "auth",
-});
-
 const user = reactive<TUser>({});
 </script>

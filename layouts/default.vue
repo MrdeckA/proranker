@@ -7,26 +7,44 @@
         <v-icon size="50" color="primary">mdi-professional-hexagon</v-icon>
         <span class="app_title">PRORANKER</span></v-app-bar-title
       >
+      <v-spacer></v-spacer>
 
-      <template v-slot:append>
+      <div>
         <NuxtLink active-class="nuxt_link_active" to="/"
-          ><v-btn :variant="currentPath == '/' ? 'tonal' : 'text'"
+          ><v-btn
+            class="text-none text-subtitle-1"
+            variant="currentPath == '/' ? 'tonal' : 'text'"
             >Acceuil</v-btn
           ></NuxtLink
         >
         <NuxtLink active-class="nuxt_link_active" to="/auth/login"
-          ><v-btn :variant="currentPath == '/auth/login' ? 'tonal' : 'text'"
+          ><v-btn
+            class="text-none text-subtitle-1"
+            :variant="currentPath == '/auth/login' ? 'tonal' : 'text'"
             >Connexion</v-btn
           ></NuxtLink
         >
         <NuxtLink active-class="nuxt_link_active" to="/auth/register"
-          ><v-btn :variant="currentPath == '/auth/register' ? 'tonal' : 'text'"
+          ><v-btn
+            class="text-none text-subtitle-1"
+            :variant="currentPath == '/auth/register' ? 'tonal' : 'text'"
             >Inscription</v-btn
           ></NuxtLink
         >
         <NuxtLink active-class="nuxt_link_active" to="/faq"
-          ><v-btn :variant="currentPath == '/faq' ? 'tonal' : 'text'"
+          ><v-btn
+            class="text-none text-subtitle-2"
+            :variant="currentPath == '/faq' ? 'tonal' : 'text'"
             >FAQ</v-btn
+          ></NuxtLink
+        >
+      </div>
+      <v-spacer></v-spacer>
+
+      <template v-slot:append>
+        <NuxtLink active-class="nuxt_link_active" to="/faq"
+          ><v-btn class="text-none" variant="elevated" color="primary"
+            >Démarrer un Classement</v-btn
           ></NuxtLink
         >
       </template>

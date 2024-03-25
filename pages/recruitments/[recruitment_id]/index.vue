@@ -519,22 +519,22 @@ onBeforeMount(() => {
 
 async function startPrediction() {
   dialog.value = true;
-  const { data, pending, error, refresh, execute, status } = await useFetch(
-    `http://localhost:8000/api/prediction/start/?campagne=26`
-  );
+  // const { data, pending, error, refresh, execute, status } = await useFetch(
+  //   `http://localhost:8000/api/prediction/start/?campagne=${route.params.recruitment_id}`
+  // );
 
-  if (data.value) {
-    dialog.value = false;
-    ranks.value = data.value.response;
-    openFormDialog.value = true;
+  // if (data.value) {
+  //   dialog.value = false;
+  //   ranks.value = data.value.response;
+  //   openFormDialog.value = true;
 
-    console.log(ranks.value);
-    // serverItems.value = data.value;
-  }
+  //   console.log(ranks.value);
+  //   // serverItems.value = data.value;
+  // }
 
-  if (error.value) {
-    // console.log("error : ", error.value?.data);
-    console.log(error.value);
-  }
+  // if (error.value) {
+  //   // console.log("error : ", error.value?.data);
+  //   console.log(error.value);
+  // }
 }
 </script>

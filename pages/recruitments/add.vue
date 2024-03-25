@@ -185,6 +185,7 @@
                       'google',
                       'cisco',
                       'amazon',
+                      'Oracle',
                       'facebook',
                       'Blockchain developper',
                     ]"
@@ -202,8 +203,16 @@
                     :items="[
                       'Java',
                       'Python',
-                      'C',
+                      'Langage C',
+                      'Node js',
+                      'MongoDB',
+                      'HTML',
+                      'CSS',
                       'C++',
+                      'Next',
+                      'React',
+                      'Typescript',
+                      'JavaScript',
                       'ethers.js',
                       'IPFS',
                       'Web3.js',
@@ -231,7 +240,15 @@
                     label="Valeur"
                     variant="outlined"
                     density="comfortable"
-                    :items="['Français', 'Anglais', 'Mandarin', 'Espagnol']"
+                    :items="[
+                      'Français',
+                      'Anglais',
+                      'Mandarin',
+                      'Espagnol',
+                      'Portugais',
+                      'Japonais',
+                      'Espagnol',
+                    ]"
                     multiple
                     required
                   >

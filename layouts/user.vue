@@ -30,10 +30,7 @@
     </v-navigation-drawer>
 
     <v-app-bar>
-      <v-app-bar-nav-icon
-        icon="mdi-arrow-left"
-        @click="drawer = !drawer"
-      ></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <!-- icon="mdi-arrow-left" -->
 
       <v-app-bar-title>Recrutements</v-app-bar-title>

@@ -7,12 +7,12 @@
         :elevation="isMobile ? 0 : 8"
         :max-width="isRegistering ? 500 : 450"
         rounded="lg"
-        v-model="isFormValid"
       >
         <v-form
           @submit.prevent="submitForm"
           validate-on="input"
           :fast-fail="true"
+          ref="formRef"
         >
           <h1 class="text-center text-h5 font-weight-bold text-primary">
             {{ isRegistering ? `INSCRIPTION` : `CONNEXION` }}
@@ -141,6 +141,7 @@
 import type { TUser, ErrorMessages } from "@/types";
 import mobile from "is-mobile";
 import { ruleRequired } from "@/helpers/rules";
+import type { VForm } from "vuetify/lib/components/index.mjs";
 
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/store";
@@ -148,11 +149,12 @@ const router = useRouter();
 const route = useRoute();
 
 const isFormValid = ref(false);
-const { $toast } = useNuxtApp();
-const { authenticationToken } = useAuthStore();
+const authStore = useAuthStore();
+
+const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
 
 const googleAuthLogin = ref(false);
-
+const { $toast } = useNuxtApp();
 //code à revoir
 //vraiment le bazar
 
@@ -207,10 +209,14 @@ const props = withDefaults(defineProps<FormProps>(), {
   isRegistering: () => false,
 });
 
+const formRef: Ref<VForm | undefined> = ref();
+
 const { isRegistering } = toRefs(props);
 let user: TUser = reactive({});
 
-function submitForm() {
+async function submitForm() {
+  const formValid = (await formRef.value?.validate())?.valid;
+
   if (
     user.password === "" ||
     user.confirmation_passsword === "" ||
@@ -219,7 +225,7 @@ function submitForm() {
     $toast.warning("Erreur ! Tous les champs sont requis");
     isFetching.value = false;
   }
-  if (isFormValid.value) {
+  if (formValid) {
     isRegistering.value
       ? onRegistrationFormSubmitPrevent()
       : onLoginFormSubmitPrevent();
@@ -228,37 +234,44 @@ function submitForm() {
 const errorMessage = ref();
 
 async function onLoginFormSubmitPrevent() {
-  try {
-    // emit(EnikejiEvents.LOGIN_FORM_SUBMIT, user.value as IUser)
-    // return navigateTo("/menu");
-    return console.log("onLoginFormSubmitPrevent");
-  } catch (error) {
-    console.log("Login Error from catch block");
-  } finally {
+  isFetching.value = true;
+  // emit(EnikejiEvents.LOGIN_FORM_SUBMIT, user.value as IUser)
+  // return navigateTo("/menu");
+  const { data, error } = await useFetch(
+    "http://localhost:8000/api/user/login/",
+    {
+      method: "post",
+      body: user,
+      onRequest({ request, options }) {
+        //
+        // console.log(request, options);
+      },
+      watch: false,
+    }
+  );
+
+  if (data.value) {
     isFetching.value = false;
+    console.log(data.value);
+    authStore.updateAuthenticatedUser(data.value.user);
+    authStore.updateAuthenticationToken(data.value.token);
+    $toast.success("Connexion Réussie !");
+    setTimeout(() => {
+      router.replace("/dashboard");
+    }, 2000);
   }
+
+  if (error.value) {
+    isFetching.value = false;
+
+    console.log(error.value.data);
+    $toast.error(error.value.data.detail);
+  }
+  // console.log("onLoginFormSubmitPrevent", user);
 }
 
 async function onRegistrationFormSubmitPrevent() {
   // emit(EnikejiEvents.REGISTRATION_FORM_SUBMIT, user.value as IUser);
   return console.log("onRegistrationFormSubmitPrevent");
-}
-
-//Begin auth ith google
-
-/* start auth */
-
-// const auth = useAuth();
-
-async function googleAuth() {
-  googleAuthLogin.value = true;
-  console.log("Authentication with google");
-  const url = "http://localhost:5000/auth/google";
-  // googleAuthLogin.value = true
-
-  if (process.client) {
-    //const newWindow =
-    window.location.href = url;
-  }
 }
 </script>

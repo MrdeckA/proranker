@@ -39,7 +39,9 @@
       <v-avatar color="primary" class="me-5">MA</v-avatar>
 
       <template #append>
-        <v-btn icon><v-icon size="35">mdi-power</v-icon></v-btn>
+        <v-btn @click="onPowerButtonClick" icon
+          ><v-icon size="35">mdi-power</v-icon></v-btn
+        >
       </template>
     </v-app-bar>
 
@@ -50,7 +52,16 @@
 </template>
 <script lang="ts" setup>
 import { NAVIGATION_DRAWER_ROUTES } from "@/constants";
+import { useAuthStore } from "~/store";
+
+const authStore = useAuthStore();
 const drawer = ref(true);
+const router = useRouter();
+
+const onPowerButtonClick = () => {
+  authStore.resetStore();
+  router.replace("/auth/login");
+};
 </script>
 
 <style scoped></style>

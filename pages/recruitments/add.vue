@@ -311,9 +311,13 @@
 import { type Campagne } from "@/types";
 import axios from "axios";
 import { isUndefined, isNull } from "lodash";
+import { useAuthStore } from "~/store";
 definePageMeta({
   layout: "user",
 });
+
+const authStore = useAuthStore();
+const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
 
 const { $toast } = useNuxtApp();
 const route = useRoute();
@@ -373,6 +377,7 @@ const onRecruitmentFormSumbit = async () => {
     },
     Headers: {
       "Content-Type": "multipart/form-data",
+      Authorization: "Bearer " + authenticationToken.value,
     },
   };
 

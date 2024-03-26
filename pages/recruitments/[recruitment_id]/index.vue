@@ -273,11 +273,15 @@ import axios from "axios";
 import { isUndefined, isNull } from "lodash";
 import { VCard } from "vuetify/components";
 import jsPDF from "jspdf";
+import { useAuthStore } from "~/store";
 // import VueExcelTable from "vue-excel-table";
 
 definePageMeta({
   layout: "user",
 });
+
+const authStore = useAuthStore();
+const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
 
 const dialog = ref(false);
 const { $toast } = useNuxtApp();
@@ -413,7 +417,12 @@ function filtrerClésDéfinies(tableau: string[], objet: any): string[] {
 // });
 
 const { data, pending, error, refresh, execute, status } = await useFetch(
-  `http://localhost:8000/api/campagnes/${route.params.recruitment_id}/`
+  `http://localhost:8000/api/campagnes/${route.params.recruitment_id}/`,
+  {
+    headers: {
+      Authorization: "Bearer " + authenticationToken.value,
+    },
+  }
 );
 
 if (data.value) {
@@ -519,22 +528,22 @@ onBeforeMount(() => {
 
 async function startPrediction() {
   dialog.value = true;
-  // const { data, pending, error, refresh, execute, status } = await useFetch(
-  //   `http://localhost:8000/api/prediction/start/?campagne=${route.params.recruitment_id}`
-  // );
+  const { data, pending, error, refresh, execute, status } = await useFetch(
+    `http://localhost:8000/api/prediction/start/?campagne=${route.params.recruitment_id}`
+  );
 
-  // if (data.value) {
-  //   dialog.value = false;
-  //   ranks.value = data.value.response;
-  //   openFormDialog.value = true;
+  if (data.value) {
+    dialog.value = false;
+    ranks.value = data.value.response;
+    openFormDialog.value = true;
 
-  //   console.log(ranks.value);
-  //   // serverItems.value = data.value;
-  // }
+    console.log(ranks.value);
+    // serverItems.value = data.value;
+  }
 
-  // if (error.value) {
-  //   // console.log("error : ", error.value?.data);
-  //   console.log(error.value);
-  // }
+  if (error.value) {
+    // console.log("error : ", error.value?.data);
+    console.log(error.value);
+  }
 }
 </script>

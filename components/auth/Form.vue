@@ -215,6 +215,8 @@ const { isRegistering } = toRefs(props);
 let user: TUser = reactive({});
 
 async function submitForm() {
+  isFetching.value = true;
+
   const formValid = (await formRef.value?.validate())?.valid;
 
   if (
@@ -229,7 +231,7 @@ async function submitForm() {
     isRegistering.value
       ? onRegistrationFormSubmitPrevent()
       : onLoginFormSubmitPrevent();
-  }
+  } else isFetching.value = false;
 }
 const errorMessage = ref();
 
@@ -272,6 +274,46 @@ async function onLoginFormSubmitPrevent() {
 
 async function onRegistrationFormSubmitPrevent() {
   // emit(EnikejiEvents.REGISTRATION_FORM_SUBMIT, user.value as IUser);
-  return console.log("onRegistrationFormSubmitPrevent");
+  isFetching.value = true;
+  console.log(user);
+  if (user.password != user.confirmation_passsword) {
+    $toast.warning("Les deux mots de passe doiven être les mêmes");
+    isFetching.value = false;
+  }
+  // emit(EnikejiEvents.LOGIN_FORM_SUBMIT, user.value as IUser)
+  // return navigateTo("/menu");
+  const { data, error } = await useFetch(
+    "http://localhost:8000/api/user/register/",
+    {
+      method: "post",
+      body: {
+        email: user.email,
+        nom: user.last_name,
+        prenom: user.first_name,
+        password: user.password,
+      },
+      onRequest({ request, options }) {
+        //
+        // console.log(request, options);
+      },
+      watch: false,
+    }
+  );
+
+  if (data.value) {
+    isFetching.value = false;
+    console.log(data.value);
+    $toast.success("Inscription Réussie !");
+    setTimeout(() => {
+      router.replace("/auth/login");
+    }, 2000);
+  }
+
+  if (error.value) {
+    isFetching.value = false;
+
+    console.log(error.value.data);
+    $toast.error(error.value.data.detail ?? error.value.data.email);
+  }
 }
 </script>

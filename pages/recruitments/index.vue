@@ -28,7 +28,7 @@
       <v-data-table
         class="border shadow-lg"
         v-model:items-per-page="itemsPerPage"
-        :headers="headers"
+        :headers="tableHeaders"
         :items-length="serverItems.length"
         :items="serverItems"
         :search="search"
@@ -72,13 +72,16 @@
 </template>
 
 <script lang="ts" setup>
+import { useAuthStore } from "~/store";
+
 definePageMeta({
   layout: "user",
 });
 const route = useRoute();
-
+const authStore = useAuthStore();
+const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
 const serverItems = ref([] as any[]);
-const headers = ref([
+const tableHeaders = ref([
   {
     title: "#",
     align: "start",
@@ -95,14 +98,22 @@ const headers = ref([
   },
   { title: "Action", key: "action", align: "center" },
 ]);
-
 const { data, pending, error, refresh, execute, status } = await useFetch(
-  "http://127.0.0.1:8000/api/campagnes/"
+  "http://127.0.0.1:8000/api/campagnes/",
+  {
+    onResponseError({ request, response, options }) {
+      //
+    },
+
+    headers: {
+      Authorization: "Bearer " + authenticationToken.value,
+    },
+  }
 );
 
 if (data.value) {
   console.log(data.value);
-  serverItems.value = data.value;
+  serverItems.value = data.value.results;
 }
 
 if (error.value) {

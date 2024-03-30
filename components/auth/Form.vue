@@ -249,6 +249,7 @@ async function onLoginFormSubmitPrevent() {
         // console.log(request, options);
       },
       watch: false,
+      timeout: 6000,
     }
   );
 
@@ -265,9 +266,10 @@ async function onLoginFormSubmitPrevent() {
 
   if (error.value) {
     isFetching.value = false;
-
-    console.log(error.value.data);
-    $toast.error(error.value.data.detail);
+    if (error.value.data?.detail) {
+      return $toast.error(error.value.data.detail);
+    }
+    return $toast.error("Erreur lors de la requête ! Veuillez rééssayer.");
   }
   // console.log("onLoginFormSubmitPrevent", user);
 }
@@ -277,7 +279,7 @@ async function onRegistrationFormSubmitPrevent() {
   isFetching.value = true;
   console.log(user);
   if (user.password != user.confirmation_passsword) {
-    $toast.warning("Les deux mots de passe doiven être les mêmes");
+    $toast.warning("Les deux mots de passe doivent êtres identiques");
     isFetching.value = false;
   }
   // emit(EnikejiEvents.LOGIN_FORM_SUBMIT, user.value as IUser)
@@ -313,7 +315,15 @@ async function onRegistrationFormSubmitPrevent() {
     isFetching.value = false;
 
     console.log(error.value.data);
-    $toast.error(error.value.data.detail ?? error.value.data.email);
+
+    if (error.value.data?.detail) {
+      return $toast.error(error.value.data.detail);
+    }
+    if (error.value.data?.email) {
+      return $toast.error(error.value.data.email);
+    }
+
+    return $toast.error("Erreur lors de la requête ! Veuillez rééssayer.");
   }
 }
 </script>

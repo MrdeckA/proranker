@@ -1,9 +1,9 @@
 <template>
   <v-container class="my-5">
     <v-row>
-      <v-col>
-        <v-form ref="formRef" @submit.prevent="onFormSubmit">
-          <v-card title="Profil" flat class="border mx-auto">
+      <v-col cols="12">
+        <v-form ref="formRef" @submit.prevent="onProfilFormSubmit">
+          <v-card title="Profil" width="55%" flat class="border mx-auto">
             <v-card-text>
               <v-row>
                 <v-col cols="12">
@@ -63,7 +63,7 @@
                 color="primary"
                 :disabled="isSaving"
                 :loading="isSaving"
-                @click="onFormSubmit"
+                @click="onProfilFormSubmit"
               >
                 Sauvegarder</v-btn
               >
@@ -71,8 +71,8 @@
           </v-card>
         </v-form>
       </v-col>
-      <v-col class="my-auto">
-        <v-card title="Mot de passe">
+      <v-col cols="12" class="my-auto mt-14">
+        <v-card width="55%" title="Mot de passe" class="border mx-auto">
           <VCol cols="12">
             <VForm ref="formRef" @submit.prevent="submitForm">
               <div class="mt-1">
@@ -111,11 +111,9 @@
                   @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 />
               </div>
-              <div class="mt-5">
+              <div class="mt-5 text-center">
                 <VBtn
                   type="submit"
-                  block
-                  min-height="45"
                   color="primary"
                   :loading="loading"
                   :disabled="loading"
@@ -178,6 +176,10 @@ const resetForm = () => {
 
 const submitForm = async () => {
   //   console.log(formRef.value.validate());
+};
+const onProfilFormSubmit = async () => {
+  //   console.log(formRef.value.validate());
+  console.log("profile form submit");
 };
 
 const meInformation = ref({

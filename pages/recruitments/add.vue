@@ -338,6 +338,8 @@ const criteriaTypes = ref(
   ].sort()
 );
 
+const openDeleteDialog = ref(false);
+
 const binariesItems = ref([
   {
     label: "Oui",

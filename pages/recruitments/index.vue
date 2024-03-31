@@ -63,7 +63,12 @@
             <v-icon color="primary"> mdi-pencil </v-icon>
           </v-btn>
 
-          <v-btn size="small" icon variant="flat">
+          <v-btn
+            @click="onDeleteIconClick(item)"
+            size="small"
+            icon
+            variant="flat"
+          >
             <v-icon color="primary"> mdi-delete </v-icon>
           </v-btn>
 
@@ -73,6 +78,24 @@
         </template></v-data-table
       ></v-card
     >
+
+    <v-dialog v-model="openDeleteDialog" width="45%">
+      <template v-slot:default="{ isActive }">
+        <v-card>
+          <v-card-title class="bg-red">Supprimer recrutement</v-card-title>
+          <v-card-text
+            >Etes vous sur de vouloir supprimer définitivement le
+            recrutement?</v-card-text
+          >
+          <v-card-actions class="d-flex justify-space-around">
+            <v-btn color="red" @click="deleleRecruitment()">Supprimer</v-btn>
+            <v-btn @click="openDeleteDialog = false" color="primary "
+              >Annuler</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -86,6 +109,8 @@ const route = useRoute();
 const authStore = useAuthStore();
 const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
 const serverItems = ref([] as any[]);
+const { $toast } = useNuxtApp();
+const openDeleteDialog = ref(false);
 const tableHeaders = ref([
   {
     title: "#",
@@ -103,101 +128,69 @@ const tableHeaders = ref([
   },
   { title: "Action", key: "action", align: "center" },
 ]);
-const { data, pending, error, refresh, execute, status } = await useFetch(
-  `http://127.0.0.1:8000/api/campagnes/?user=${authenticatedUser.value.id}`,
-  {
-    onResponseError({ request, response, options }) {
-      //
-    },
 
-    headers: {
-      Authorization: "Bearer " + authenticationToken.value,
-    },
+async function loadRecruitments() {
+  const { data, pending, error, refresh, execute, status } = await useFetch(
+    `http://127.0.0.1:8000/api/campagnes/?user=${authenticatedUser.value.id}`,
+    {
+      onResponseError({ request, response, options }) {
+        //
+      },
+
+      headers: {
+        Authorization: "Bearer " + authenticationToken.value,
+      },
+    }
+  );
+
+  if (data.value) {
+    console.log(data.value);
+    serverItems.value = data.value.results;
   }
-);
 
-if (data.value) {
-  console.log(data.value);
-  serverItems.value = data.value.results;
+  if (error.value) {
+    // console.log("error : ", error.value?.data);
+    console.log(error.value);
+  }
 }
+await loadRecruitments();
 
-if (error.value) {
-  // console.log("error : ", error.value?.data);
-  console.log(error.value);
-}
-
-const mocks = [
-  {
-    nom: "Recrutement développeur Blockchain",
-    description_poste:
-      "Contribuez à la conception et au développement de solutions blockchain innovantes.",
-    intitule_poste: "Développeur Blockchain",
-    minimum_number_of_languages: 2,
-    minimum_number_of_experiences: 3,
-    minimum_degree: "Bac+4 en informatique",
-    languages: "Solidity, JavaScript",
-    certifications: "Certification Ethereum Developer",
-    skills: "Smart Contracts, Développement d'applications décentralisées",
-    user: 6,
-    files: ["CV.pdf", "Lettre_motivation.pdf"],
-  },
-  {
-    nom: "Recrutement ingénieur en intelligence artificielle",
-    description_poste:
-      "Participez à la conception et à l'implémentation de solutions d'intelligence artificielle avancées.",
-    intitule_poste: "Ingénieur IA",
-    minimum_number_of_languages: 3,
-    minimum_number_of_experiences: 4,
-    minimum_degree: "Bac+5 en intelligence artificielle",
-    languages: "Python, TensorFlow, PyTorch",
-    certifications: "Certification Machine Learning",
-    skills: "Apprentissage profond, Traitement du langage naturel",
-    user: 7,
-    files: ["CV.pdf", "Lettre_motivation.pdf"],
-  },
-  {
-    nom: "Recrutement architecte cloud",
-    description_poste:
-      "Concevez et implémentez des solutions cloud robustes pour répondre aux besoins de l'entreprise.",
-    intitule_poste: "Architecte Cloud",
-    minimum_number_of_languages: 2,
-    minimum_number_of_experiences: 5,
-    minimum_degree: "Bac+4 en informatique",
-    languages: "Java, Python",
-    certifications: "Certification AWS Solutions Architect",
-    skills: "Architecture cloud, Déploiement automatisé",
-    user: 8,
-    files: ["CV.pdf", "Lettre_motivation.pdf"],
-  },
-  {
-    nom: "Recrutement analyste en cybersécurité",
-    description_poste:
-      "Assurez la sécurité des systèmes informatiques en identifiant et en prévenant les menaces potentielles.",
-    intitule_poste: "Analyste Cybersécurité",
-    minimum_number_of_languages: 2,
-    minimum_number_of_experiences: 4,
-    minimum_degree: "Bac+5 en cybersécurité",
-    languages: "Python, C, C++",
-    certifications: "Certification CISSP, Certification CEH",
-    skills: "Analyse des vulnérabilités, Gestion des incidents",
-    user: 9,
-    files: ["CV.pdf", "Lettre_motivation.pdf"],
-  },
-  {
-    nom: "Recrutement développeur DevOps",
-    description_poste:
-      "Automatisez les processus de développement, de déploiement et de gestion d'infrastructures.",
-    intitule_poste: "Développeur DevOps",
-    minimum_number_of_languages: 2,
-    minimum_number_of_experiences: 3,
-    minimum_degree: "Bac+3 en informatique",
-    languages: "Shell, Python",
-    certifications: "Certification DevOps",
-    skills: "Automatisation, CI/CD, Gestion d'infrastructures",
-    user: 10,
-    files: ["CV.pdf", "Lettre_motivation.pdf"],
-  },
-];
 const itemsPerPage = ref(15);
 const search = ref("");
+
+const onDeleteIconClick = async (item: any) => {
+  console.log("delete icon is clicked ", item);
+  openDeleteDialog.value = true;
+  recruitementToDelete.value = item;
+};
+
+const recruitementToDelete = ref();
+
+async function deleleRecruitment() {
+  const { data, pending, error, refresh, execute, status } = await useFetch(
+    `http://127.0.0.1:8000/api/campagnes/${recruitementToDelete.value.id}/`,
+    {
+      onResponseError({ request, response, options }) {
+        //
+      },
+      method: "delete",
+      headers: {
+        Authorization: "Bearer " + authenticationToken.value,
+      },
+    }
+  );
+  openDeleteDialog.value = false;
+  recruitementToDelete.value = null;
+  if (data.value) {
+    loadRecruitments();
+    console.log(data.value);
+    return $toast.success("Recrutement supprimé avec succès !");
+  }
+
+  if (error.value) {
+    // console.log("error : ", error.value?.data);
+    console.log(error.value);
+    $toast.error("Erreur lors de la suppression !");
+  }
+}
 </script>

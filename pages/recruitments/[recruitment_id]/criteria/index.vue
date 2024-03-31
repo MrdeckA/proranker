@@ -22,7 +22,7 @@
         <v-btn color="primary" @click="openFormDialog = true"
           >Ajouter un critère</v-btn
         >
-        <!-- :to="'/campaigns/' + route.params.campaign_id + '/criteria/add'" -->
+        <!-- :to="'/recruitments/' + route.params.campaign_id + '/criteria/add'" -->
       </v-card-title>
 
       <v-divider></v-divider>
@@ -41,7 +41,11 @@
           </v-card>
         </template>
         <template #item.action="{ item }">
-          <v-btn size="small" :to="`/campaigns/${item.id}`" icon variant="flat"
+          <v-btn
+            size="small"
+            :to="`/recruitments/${item.id}`"
+            icon
+            variant="flat"
             ><v-icon color="primary"> mdi-eye </v-icon></v-btn
           >
           <v-btn size="small" icon variant="flat">

@@ -19,7 +19,7 @@
           class="me-5"
         ></v-text-field>
 
-        <!-- <v-btn :to="'/campaigns/add'" color="primary">Ajouter un Fichier</v-btn> -->
+        <!-- <v-btn :to="'/recruitments/add'" color="primary">Ajouter un Fichier</v-btn> -->
       </v-card-title>
 
       <v-divider></v-divider>
@@ -27,8 +27,8 @@
         class="border shadow-lg"
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
-        :items-length="totalItems"
-        :items="serverItems"
+        :items-length="campagnes.length"
+        :items="campagnes"
         :search="search"
         item-value="name"
       >
@@ -41,12 +41,16 @@
 
         <template #item.id="{ item, index }">
           <span class="text-truncate">{{ index + 1 }}</span>
-          <!-- <v-btn icon variant="flat">
-          <v-icon color="primary"> mdi-dots-vertical </v-icon>
-        </v-btn> -->
+        </template>
+        <template #item.numberoffiles="{ item, index }">
+          <span>{{ item.files.length }}</span>
         </template>
         <template #item.action="{ item }">
-          <v-btn size="small" :to="`/files/${item.id}`" icon variant="flat"
+          <v-btn
+            size="small"
+            :to="`/recruitments/${item.id}/files/`"
+            icon
+            variant="flat"
             ><v-icon color="primary"> mdi-eye </v-icon></v-btn
           >
 
@@ -61,12 +65,14 @@
 
 <script lang="ts" setup>
 import { type Campagne } from "@/types";
+import { useAuthStore } from "~/store";
 definePageMeta({
   layout: "user",
 });
 const route = useRoute();
-
-const serverItems = ref([] as Campagne[]);
+const authStore = useAuthStore();
+const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
+const campagnes = ref([] as any[]);
 const headers = ref([
   {
     title: "#",
@@ -80,37 +86,28 @@ const headers = ref([
     title: "Nombre de fichiers",
     width: "25%",
     key: "numberoffiles",
-    align: "start",
+    align: "center",
   },
   { title: "Action", key: "action", align: "center" },
 ]);
 
 const { data, pending, error, refresh, execute, status } = await useFetch(
-  "http://127.0.0.1:8000/api/campagnes/"
+  `http://127.0.0.1:8000/api/campagnes/?user=${authenticatedUser.value?.id}`,
+  {
+    headers: {
+      Authorization: "Bearer " + authenticationToken.value,
+    },
+  }
 );
+
 const totalItems = ref(0);
 
 if (data.value) {
-  console.log(data.value);
-  serverItems.value = data.value;
-  totalItems.value = ref(data.value.length);
-  // console.log(JSON.parse(serverItems.value[8].files));
-
-  // serverItems.vaue.for
-
-  serverItems.value[0].numberoffiles = 16;
-  serverItems.value[1].numberoffiles = 5;
-  serverItems.value[2].numberoffiles = 13;
-  serverItems.value[3].numberoffiles = 19;
-  serverItems.value[4].numberoffiles = 14;
-  serverItems.value[5].numberoffiles = 12;
-  serverItems.value[6].numberoffiles = 20;
-  serverItems.value[7].numberoffiles = 15;
-  serverItems.value[8].numberoffiles = 10;
-  console.log(serverItems.value[0]);
-  // serverItems.value.forEach((element) => {
-  //   console.log(`${element.nom} => ${element.files}`);
-  // });
+  campagnes.value = data.value.results;
+  campagnes.value = campagnes.value.map((c) => {
+    return { ...c, files: JSON.parse(c.files) };
+  });
+  console.log(campagnes.value);
 }
 
 if (error.value) {

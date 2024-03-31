@@ -3,7 +3,7 @@
     <v-card flat border>
       <v-card-title class="d-flex align-center pe-2">
         <v-icon icon="mdi-account-multiple"></v-icon>
-        <span class="ms-5">Liste des collaborateurs</span>
+        <span class="ms-5">Liste des candidats</span>
 
         <v-spacer></v-spacer>
 
@@ -18,10 +18,6 @@
           variant="solo-filled"
           class="me-5"
         ></v-text-field>
-
-        <v-btn @click="onCollaboratorAddClick" color="primary"
-          >Ajouter un collaborateur</v-btn
-        >
       </v-card-title>
 
       <v-divider></v-divider>
@@ -29,45 +25,38 @@
         class="border shadow-lg"
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
-        :items-length="collaborateurs.length"
-        :items="collaborateurs"
+        :items-length="applicants.length"
+        :items="applicants"
         :search="search"
       >
         <template #item.id="{ item, index }">
           <span class="text-truncate">{{ index + 1 }}</span>
           <!-- <v-btn icon variant="flat">
-          <v-icon color="primary"> mdi-dots-vertical </v-icon>
-        </v-btn> -->
+            <v-icon color="primary"> mdi-dots-vertical </v-icon>
+          </v-btn> -->
         </template>
+        <template #item.campagne="{ item, index }">
+          <span>{{ getCampagne(item.campagne).nom }}</span>
 
-        <template #item.nom="{ item, index }">
-          <span>{{ getCollaborator(item.invite).nom }}</span></template
-        >
-        <template #item.prenom="{ item, index }">
-          <span>{{ getCollaborator(item.invite).prenom }}</span></template
-        >
-        <template #item.role="{ item, index }">
-          <span>{{ item.role }}</span></template
-        >
-        <template #item.email="{ item, index }">
-          <span>{{ getCollaborator(item.invite).email }}</span></template
-        >
-
+          <!-- <v-btn icon variant="flat">
+            <v-icon color="primary"> mdi-dots-vertical </v-icon>
+          </v-btn> -->
+        </template>
         <template #item.action="{ item, index }">
           <v-btn
             size="small"
             @click="openFormDialogForCampagne(item, index)"
             icon
             variant="flat"
-            ><v-icon color="primary"> mdi-delete </v-icon></v-btn
+            ><v-icon color="primary"> mdi-eye </v-icon></v-btn
           >
 
           <!-- <v-btn icon variant="flat">
-          <v-icon color="primary"> mdi-dots-vertical </v-icon>
-        </v-btn> -->
+            <v-icon color="primary"> mdi-dots-vertical </v-icon>
+          </v-btn> -->
         </template></v-data-table
-      ></v-card
-    >
+      >
+    </v-card>
     <v-dialog v-model="openFormDialog" width="750">
       <template v-slot:default="{ isActive }">
         <v-container>
@@ -171,12 +160,11 @@ definePageMeta({
 });
 const route = useRoute();
 const openFormDialog = ref(false);
-const collaborateurs = ref([] as any[]);
-const campagnesList = ref([] as any[]);
-const usersList = ref([] as any[]);
+
 const serverItems = ref([] as any[]);
 const authStore = useAuthStore();
 const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
+
 const headers = ref([
   {
     title: "#",
@@ -184,10 +172,11 @@ const headers = ref([
     sortable: false,
     key: "id",
   },
-  { title: "Nom", key: "nom", align: "start" },
-  { title: "Prénom", key: "prenom", align: "start" },
+  { title: "Nom", key: "nom_complet", align: "start" },
   { title: "Email", key: "email", align: "start" },
-  { title: "Role", key: "role", align: "start" },
+  { title: "Campagne", key: "campagne", align: "start" },
+  { title: "Téléphone", key: "telephone", align: "start" },
+
   { title: "Action", key: "action", align: "center" },
 ]);
 
@@ -195,6 +184,7 @@ const headers = ref([
 //   "http://127.0.0.1:8000/api/liste-campagnes-collaborateurs/?user=1"
 // );
 
+const applicants = ref([] as any[]);
 const totalItems = ref(0);
 const itemsPerPage = ref(10);
 const search = ref("");
@@ -216,9 +206,10 @@ function openFormDialogForCampagne(item: any, index: number) {
   openFormDialog.value = true;
 }
 
+const campagnesList = ref([] as any[]);
 onBeforeMount(async () => {
   const { data, error } = await useFetch(
-    "http://127.0.0.1:8000/api/user/all/",
+    `http://localhost:8000/api/campagnes/`,
     {
       onRequest({ request, options }) {
         //
@@ -230,16 +221,17 @@ onBeforeMount(async () => {
   );
 
   if (data.value) {
-    usersList.value = data.value.results;
-    console.log(data.value);
+    campagnesList.value = data.value.results;
+    console.log(campagnesList.value);
   }
 
-  if (error.value) {
+  if (data.value) {
     // console.log("error : ", error.value?.data);
     // console.log(error.value);
   }
+
   const { data: resData, error: resError } = await useFetch(
-    "http://127.0.0.1:8000/api/collaborations/",
+    `http://localhost:8000/api/candidats/by-user/?user=${authenticatedUser.value.id}`,
     {
       onRequest({ request, options }) {
         //
@@ -253,8 +245,8 @@ onBeforeMount(async () => {
   const selectedCampagne = ref();
 
   if (resData.value) {
-    collaborateurs.value = resData.value.results;
-    // console.log(data.value);
+    applicants.value = resData.value.results;
+    console.log(resData.value.results);
   }
 
   if (resError.value) {
@@ -271,7 +263,7 @@ const user = reactive<TUser>({});
 
 const visible = ref(false);
 
-function getCollaborator(id: string) {
-  return usersList.value.find((u) => u.id == id);
+function getCampagne(id: number) {
+  return campagnesList.value.find((campagne) => campagne.id == id);
 }
 </script>

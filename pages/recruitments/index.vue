@@ -99,7 +99,7 @@ const tableHeaders = ref([
   { title: "Action", key: "action", align: "center" },
 ]);
 const { data, pending, error, refresh, execute, status } = await useFetch(
-  "http://127.0.0.1:8000/api/campagnes/",
+  `http://127.0.0.1:8000/api/campagnes/?user=${authenticatedUser.value.id}`,
   {
     onResponseError({ request, response, options }) {
       //

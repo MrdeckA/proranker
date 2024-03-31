@@ -529,8 +529,14 @@ onBeforeMount(() => {
 async function startPrediction() {
   dialog.value = true;
   const { data, pending, error, refresh, execute, status } = await useFetch(
-    `http://localhost:8000/api/prediction/start/?campagne=${route.params.recruitment_id}`
+    `http://localhost:8000/api/campagnes/start/ranking?campagne=${route.params.recruitment_id}`,
+    {
+      headers: {
+        Authorization: "Bearer " + authenticationToken.value,
+      },
+    }
   );
+  dialog.value = false;
 
   if (data.value) {
     dialog.value = false;

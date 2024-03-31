@@ -1,18 +1,20 @@
 <template>
   <v-container>
     <v-card width="80%" class="pa-5 mx-auto" title="Nouveau recrutement"
-      ><v-form @submit.prevent="onRecruitmentFormSumbit">
+      ><v-form ref="formRef" @submit.prevent="onRecruitmentFormSumbit">
         <v-col>
           <v-text-field
             v-model="campagneToEdit.nom"
             label="Nom"
             variant="outlined"
+            :rules="[ruleRequired]"
           ></v-text-field></v-col
         ><v-col>
           <v-text-field
             v-model="campagneToEdit.intitule_poste"
             label="Intitulé du poste"
             variant="outlined"
+            :rules="[ruleRequired]"
           ></v-text-field
         ></v-col>
         <v-col>
@@ -20,6 +22,7 @@
             v-model="campagneToEdit.description_poste"
             label="Description du poste"
             variant="outlined"
+            :rules="[ruleRequired]"
           ></v-textarea
         ></v-col>
 
@@ -312,6 +315,8 @@ import { type Campagne } from "@/types";
 import axios from "axios";
 import { isUndefined, isNull } from "lodash";
 import { useAuthStore } from "~/store";
+import { ruleRequired } from "~/helpers/rules";
+import type { VForm } from "vuetify/components/VForm";
 definePageMeta({
   layout: "user",
 });
@@ -355,41 +360,59 @@ interface Critere {
   type: string;
   valeur: string;
 }
+const formRef: Ref<VForm | undefined> = ref();
+
 const criteres: Ref<Critere[]> = ref([]);
 
 const onNewCriteriaFormSubmit = () => {};
 
 const onRecruitmentFormSumbit = async () => {
   // console.log(campagneToEdit.value);
-  let data = new FormData();
-  campagneToEdit.value.fichiers?.forEach((file, index) => {
-    console.log(index);
-    data.append(file.name, campagneToEdit.value.fichiers[index]);
-  });
-  data.append("model", JSON.stringify({ ...campagneToEdit.value, user: "1" }));
-  console.log(data);
+  const isFormValid = (await formRef.value?.validate())?.valid;
 
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    data: {
-      ...data,
-    },
-    Headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: "Bearer " + authenticationToken.value,
-    },
-  };
-
-  await axios
-    .post("http://127.0.0.1:8000/api/campagnes/", data, config)
-    .then((response) => {
-      router.push(`/recruitments/${response.data.campagne.id}?created=true`);
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
+  if (isFormValid) {
+    if (
+      !campagneToEdit.value?.fichiers?.length ||
+      campagneToEdit.value?.fichiers?.length < 2
+    ) {
+      return $toast.error("Minimum 2 fichiers requis");
+    }
+    let data = new FormData();
+    campagneToEdit.value.fichiers?.forEach((file, index) => {
+      console.log(index);
+      data.append(file.name, campagneToEdit.value.fichiers[index]);
     });
+
+    data.append(
+      "model",
+      JSON.stringify({
+        ...campagneToEdit.value,
+        user: authenticatedUser.value?.id,
+      })
+    );
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      data: {
+        ...data,
+      },
+      Headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: "Bearer " + authenticationToken.value,
+      },
+    };
+
+    await axios
+      .post("http://127.0.0.1:8000/api/campagnes/", data, config)
+      .then((response) => {
+        router.push(`/recruitments/${response.data.campagne.id}?created=true`);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 };
 const search = ref("");
 
@@ -413,7 +436,7 @@ watch(campagneToEdit.value, () => {
     campagneToEdit.value
   ).sort();
 
-  console.log(criteriaTypes.value);
+  // console.log(criteriaTypes.value);
   // criteriaTypes.value.forEach((criteria) => {
   //   if (isDefinedValue(campagneToEdit.value[criteria])) {
   //     console.log(criteria);

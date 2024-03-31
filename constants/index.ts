@@ -23,10 +23,16 @@ export const NAVIGATION_DRAWER_ROUTES = [
     icon: "mdi-file-pdf-box",
   },
   {
+    title: "Candidats",
+    path: "/applicants",
+    icon: "mdi-account",
+  },
+  {
     title: "Collaborateurs",
     path: "/collaborators",
     icon: "mdi-account-group",
   },
+
   {
     title: "Mon Profil",
     path: "/profile",

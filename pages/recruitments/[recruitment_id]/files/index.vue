@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card :title="campagne.nom">
+    <v-card width="90%" class="mx-auto" :title="campagne.nom">
       <template #append>
         <v-btn :to="'/recruitments/add'" color="primary"
           >Ajouter un Fichier</v-btn
@@ -16,6 +16,7 @@
           subtitle="350 Ko"
         >
           <template #append>
+            <v-btn size="small" icon="mdi-eye" variant="text"></v-btn>
             <v-btn size="small" icon="mdi-download" variant="text"></v-btn>
             <v-btn size="small" icon="mdi-delete" variant="text"></v-btn>
           </template>

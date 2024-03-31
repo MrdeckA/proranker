@@ -77,22 +77,54 @@
 
 <script lang="ts" setup>
 import NumberAnimation from "vue-number-animation";
+import { useAuthStore } from "~/store";
 
 definePageMeta({
   layout: "user",
 });
 
 const stats = ref({
-  recruitments: 5,
-  files: 50,
-  collaborators: 5,
-  inProgressRanking: 1,
-  endedRanking: 4,
-  candidates: 40,
+  recruitments: 0,
+  files: 0,
+  collaborators: 0,
+  candidates: 0,
 });
+
+const authStore = useAuthStore();
+const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
 
 function formatValue(value: number) {
   return `${value.toFixed(0)}`;
+}
+
+onBeforeMount(async () => {
+  await init();
+});
+
+async function init() {
+  const { data, error } = await useFetch(
+    `http://127.0.0.1:8000/api/user/stats/${authenticatedUser.value.id}/`,
+    {
+      // query: {
+      //   user: "1",
+      // },
+
+      onRequest({ request, options }) {
+        //
+      },
+      headers: {
+        Authorization: "Bearer " + authenticationToken.value,
+      },
+    }
+  );
+
+  if (data.value) {
+    stats.value = data.value;
+  }
+
+  if (error.value) {
+    console.log("error : ", error.value);
+  }
 }
 </script>
 

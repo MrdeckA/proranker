@@ -137,13 +137,14 @@
             </v-list-item>
           </v-list>
         </v-col>
-        <div class="text-center" v-if="!isUpdate">
+        <div class="text-center d-flex justify-space-around" v-if="!isUpdate">
           <v-btn
             color="primary"
             @click="isUpdate = true"
             prepend-icon="mdi-pencil"
             >Modifier</v-btn
           >
+          <v-btn color="red" prepend-icon="mdi-delete">Supprimer</v-btn>
         </div>
 
         <div class="text-center" v-else>
@@ -157,7 +158,7 @@
           <v-btn
             color="primary"
             @click="isUpdate = true"
-            prepend-icon="mdi-pencil"
+            prepend-icon="mdi-content-save"
             >Sauvegarder</v-btn
           >
         </div>
@@ -517,6 +518,9 @@ function onPrinterClick() {
 onBeforeMount(() => {
   if (route.query.created === "true") {
     $toast.success("Recrutement créé avec succès !");
+  }
+  if (route.query.update === "true") {
+    isUpdate.value = true;
   }
 });
 

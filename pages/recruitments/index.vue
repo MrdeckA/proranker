@@ -54,7 +54,12 @@
             variant="flat"
             ><v-icon color="primary"> mdi-eye </v-icon></v-btn
           >
-          <v-btn size="small" icon variant="flat">
+          <v-btn
+            :to="`/recruitments/${item.id}?update=true`"
+            size="small"
+            icon
+            variant="flat"
+          >
             <v-icon color="primary"> mdi-pencil </v-icon>
           </v-btn>
 

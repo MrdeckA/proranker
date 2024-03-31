@@ -2,8 +2,8 @@ export default class Tenant {
   public id?: string;
   public _id?: string;
 
-  public firstName?: string;
-  public lastName?: string;
+  public prenom?: string;
+  public nom?: string;
   public fullName?: string;
   public email?: string;
   public password?: string;
@@ -19,8 +19,8 @@ export default class Tenant {
     this.id = tenant.id;
     this._id = tenant._id;
     this.invitationStatus = tenant.invitationStatus;
-    this.firstName = tenant.firstName;
-    this.lastName = tenant.lastName;
+    this.prenom = tenant.prenom;
+    this.nom = tenant.nom;
     this.fullName = tenant.fullName;
     this.email = tenant.email;
     this.password = tenant.password;

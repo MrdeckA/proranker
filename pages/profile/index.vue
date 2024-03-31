@@ -25,7 +25,7 @@
                 <v-col cols="12">
                   <v-text-field
                     id="lastName"
-                    v-model="meInformation.last_name"
+                    v-model="meInformation.nom"
                     label="Nom"
                     placeholder="Doe"
                     required
@@ -42,7 +42,7 @@
                 <v-col cols="12">
                   <v-text-field
                     id="firstName"
-                    v-model="meInformation.first_name"
+                    v-model="meInformation.prenom"
                     label="Prénom"
                     placeholder="John"
                     required
@@ -61,8 +61,8 @@
             <v-col class="d-flex justify-space-around">
               <v-btn
                 color="primary"
-                :disabled="isSaving"
-                :loading="isSaving"
+                :disabled="loading"
+                :loading="loading"
                 @click="onProfilFormSubmit"
               >
                 Sauvegarder</v-btn
@@ -74,11 +74,11 @@
       <v-col cols="12" class="my-auto mt-14">
         <v-card width="55%" title="Mot de passe" class="border mx-auto">
           <VCol cols="12">
-            <VForm ref="formRef" @submit.prevent="submitForm">
+            <VForm ref="passworFormRef" @submit.prevent="submitForm">
               <div class="mt-1">
                 <VTextField
                   id="password"
-                  v-model="password"
+                  v-model="meInformation.password"
                   :rules="[ruleRequired, rulePassLen]"
                   prepend-inner-icon="mdi-lock"
                   name="password"
@@ -97,7 +97,7 @@
                 <VTextField
                   label="Confirmation du mot de passe"
                   id="confirm-password"
-                  v-model="confirmationPassword"
+                  v-model="meInformation.confirmation_passsword"
                   :rules="[ruleRequired, rulePassLen]"
                   prepend-inner-icon="mdi-lock"
                   name="confirm-password"
@@ -141,7 +141,7 @@ import {
   rulePassLen,
 } from "~/helpers/rules";
 const { appName } = useAppConfig();
-import { useAppStore } from "~/store";
+import { useAppStore, useAuthStore } from "~/store";
 import type { TUser } from "~/types";
 
 useHead({
@@ -155,7 +155,8 @@ definePageMeta({
 const appStore = useAppStore();
 const { $toast } = useNuxtApp();
 const corverFiles = ref<File[]>([]);
-const formRef: Ref<VForm | null> = ref(null);
+const formRef: Ref<VForm | undefined> = ref();
+const passworFormRef: Ref<VForm | undefined> = ref();
 const router = useRouter();
 const isSaving = ref(false);
 const route = useRoute();
@@ -168,36 +169,146 @@ const errorMessages = ref([] as string[]);
 const isFormValid = ref(false);
 const isPasswordVisible = ref(false);
 const loading = ref(false);
-
+const authStore = useAuthStore();
+const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
+const isFetching = ref(false);
 const resetForm = () => {
   if (process.client) {
   }
 };
 
 const submitForm = async () => {
-  //   console.log(formRef.value.validate());
+  console.log("fffff");
+
+  const isFormValid = (await passworFormRef.value?.validate())?.valid;
+  console.log(isFormValid);
+  if (isFormValid) {
+    if (
+      meInformation.value.password != meInformation.value.confirmation_passsword
+    ) {
+      isFetching.value = false;
+      return $toast.warning("Les deux mots de passe doivent êtres identiques");
+    }
+    loading.value = true;
+    let fetchData = { password: meInformation.value.password };
+    // delete fetchData.value.password;
+    // delete fetchData.value.confirmation_passsword;
+    const { data, error } = await useFetch(
+      `http://localhost:8000/api/user/${authenticatedUser.value?.id}/`,
+      {
+        onRequest({ request, options }) {
+          //
+          console.log(request, options);
+        },
+        method: "put",
+        watch: false,
+        headers: {
+          Authorization: "Bearer " + authenticationToken.value,
+        },
+        body: fetchData,
+      }
+    );
+
+    loading.value = false;
+    if (data.value) {
+      meInformation.value = data.value;
+      delete meInformation.value.password;
+      console.log(data.value);
+      return $toast.success("Mot de passe mis à jour avec succès !");
+    }
+
+    if (error.value) {
+      console.log(error.value.data);
+      if (error.value.data) {
+        return $toast.error(error.value.data);
+      }
+      return $toast.error("Erreur lors de la requête ! Veuillez rééssayer.");
+    }
+  }
 };
 const onProfilFormSubmit = async () => {
-  //   console.log(formRef.value.validate());
-  console.log("profile form submit");
+  // console.log("ok");
+
+  const isFormValid = (await formRef.value?.validate())?.valid;
+  if (isFormValid) {
+    loading.value = true;
+    let fetchData = meInformation;
+    // delete fetchData.value.password;
+    // delete fetchData.value.confirmation_passsword;
+    const { data, error } = await useFetch(
+      `http://localhost:8000/api/user/${authenticatedUser.value?.id}/`,
+      {
+        onRequest({ request, options }) {
+          //
+          console.log(request, options);
+        },
+        method: "put",
+        watch: false,
+        headers: {
+          Authorization: "Bearer " + authenticationToken.value,
+        },
+        body: fetchData.value,
+      }
+    );
+
+    loading.value = false;
+    if (data.value) {
+      meInformation.value = data.value;
+      delete meInformation.value.password;
+      console.log(data.value);
+      return $toast.success("Profil mis à jour avec succès !");
+    }
+
+    if (error.value) {
+      console.log(error.value.data);
+      if (error.value.data) {
+        return $toast.error(error.value.data);
+      }
+      return $toast.error("Erreur lors de la requête ! Veuillez rééssayer.");
+    }
+  }
 };
 
-const meInformation = ref({
-  first_name: "Mériadeck",
-  last_name: "AMOUSSOU",
-  email: "mrdeck30@gmail.com",
-} as TUser);
+const meInformation = ref({} as TUser);
 
 const onFormSubmit = async () => {
   // resetForm();
 };
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
   appStore.setCurrentPageTitle("Modifier profil");
-  init();
+
+  await init();
 });
 
-async function init() {}
+async function init() {
+  const { data, error } = await useFetch(
+    `http://localhost:8000/api/user/${authenticatedUser.value?.id}/`,
+    {
+      onRequest({ request, options }) {
+        //
+        // console.log(request, options);
+      },
+      watch: false,
+      headers: {
+        Authorization: "Bearer " + authenticationToken.value,
+      },
+    }
+  );
+
+  if (data.value) {
+    meInformation.value = data.value;
+    delete meInformation.value.password;
+    console.log(data.value);
+  }
+
+  if (error.value) {
+    if (error.value.data?.detail) {
+      return $toast.error(error.value.data.detail);
+    }
+    return $toast.error("Erreur lors de la requête ! Veuillez rééssayer.");
+  }
+}
 </script>
 
 <style scoped></style>

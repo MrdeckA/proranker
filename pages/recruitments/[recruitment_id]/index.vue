@@ -274,7 +274,7 @@ import axios from "axios";
 import { isUndefined, isNull } from "lodash";
 import { VCard } from "vuetify/components";
 import jsPDF from "jspdf";
-import { useAuthStore } from "~/store";
+import { useAppStore, useAuthStore } from "~/store";
 // import VueExcelTable from "vue-excel-table";
 
 definePageMeta({
@@ -283,6 +283,10 @@ definePageMeta({
 
 const authStore = useAuthStore();
 const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
+
+const appStore = useAppStore();
+
+const { currentAppBarTitle } = storeToRefs(appStore);
 
 const dialog = ref(false);
 const { $toast } = useNuxtApp();
@@ -429,6 +433,9 @@ const { data, pending, error, refresh, execute, status } = await useFetch(
 if (data.value) {
   campagneToEdit.value = data.value;
   console.log(data.value);
+  appStore.setCurrentAppBarTitle(
+    `Détails sur le recrutement ${campagneToEdit.value.nom}`
+  );
   // serverItems.value = data.value;
 }
 

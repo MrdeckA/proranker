@@ -3,7 +3,6 @@
 import vuetify from "vite-plugin-vuetify";
 
 export default defineNuxtConfig({
-  ssr: false,
   devtools: { enabled: true },
   css: [
     "vuetify/lib/styles/main.sass",
@@ -13,6 +12,7 @@ export default defineNuxtConfig({
   build: {
     transpile: ["vuetify"],
   },
+  ssr: false,
   app: {
     head: {
       link: [

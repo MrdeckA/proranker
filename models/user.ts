@@ -9,8 +9,8 @@ export default class User {
   public nom?: string;
 
   // COMPUTED PROPERTIES
-  public full_name?: string;
   public avatar?: string;
+  public full_name?: string;
 
   // METHODS GOES BELLOW
 

@@ -12,10 +12,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // Si l'utilisateur n'a pas le token et tente d'accéder à une route privée
   // On le renvoie à la pas de connexion
 
+  const router = useRouter();
   if (!authenticationToken.value && !isPubicRoute) {
     $toast.error("Vous devez d'abord vous connecter !");
+
     return abortNavigation();
-    // return navigateTo("/auth/login");
   }
 
   // if (to.path === "/auth/verify-email" && !to.query.verify_token) {

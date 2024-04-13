@@ -14,6 +14,7 @@ export default class Tenant {
   public appVersion?: string;
   public appOs?: string;
   public fcmToken?: string;
+  public full_name?: string;
 
   constructor(tenant: Partial<Tenant> = {}) {
     this.id = tenant.id;
@@ -30,5 +31,6 @@ export default class Tenant {
     this.appVersion = tenant.appVersion || "";
     this.appOs = tenant.appOs || "";
     this.fcmToken = tenant.fcmToken;
+    this.full_name = this.prenom + " " + this.nom;
   }
 }

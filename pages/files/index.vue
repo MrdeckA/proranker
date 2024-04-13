@@ -65,10 +65,14 @@
 
 <script lang="ts" setup>
 import { type Campagne } from "@/types";
-import { useAuthStore } from "~/store";
+import { useAppStore, useAuthStore } from "~/store";
 definePageMeta({
   layout: "user",
 });
+
+const appStore = useAppStore();
+
+const { currentAppBarTitle } = storeToRefs(appStore);
 const route = useRoute();
 const authStore = useAuthStore();
 const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
@@ -108,6 +112,7 @@ if (data.value) {
     return { ...c, files: JSON.parse(c.files) };
   });
   console.log(campagnes.value);
+  appStore.setCurrentAppBarTitle(`Détails Fichiers`);
 }
 
 if (error.value) {

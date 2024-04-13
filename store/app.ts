@@ -6,6 +6,11 @@ export default defineStore(
   () => {
     const appName = ref("Pro Ranker app");
     const currentPageTitle = ref("Page Title From Store");
+    const currentAppBarTitle = ref("Recrutements");
+
+    const setCurrentAppBarTitle = (_title: string) => {
+      currentAppBarTitle.value = _title;
+    };
 
     const setAppName = (_name: string) => {
       appName.value = _name;
@@ -27,9 +32,11 @@ export default defineStore(
     return {
       appName,
       currentPageTitle,
+      currentAppBarTitle,
       setAppName,
       resetStore,
       setCurrentPageTitle,
+      setCurrentAppBarTitle,
     };
   },
 

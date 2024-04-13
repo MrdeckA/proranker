@@ -33,10 +33,18 @@
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <!-- icon="mdi-arrow-left" -->
 
-      <v-app-bar-title>Recrutements</v-app-bar-title>
-      <v-btn prepend-icon="mdi-home" class="me-5">Accueil</v-btn>
+      <v-app-bar-title>{{ currentAppBarTitle }}</v-app-bar-title>
+      <v-btn prepend-icon="mdi-home" class="me-5" to="/dashboard"
+        >Accueil</v-btn
+      >
       <!-- <v-btn prepend-icon="mdi-bell" class="me-5">Notification</v-btn> -->
-      <v-avatar color="primary" class="me-5">MA</v-avatar>
+      <v-btn icon to="/profile" class="me-5">
+        <v-avatar color="primary"
+          >{{
+            logolify(`${authenticatedUser?.prenom} ${authenticatedUser?.nom}`)
+          }}
+        </v-avatar></v-btn
+      >
 
       <template #append>
         <v-btn @click="onPowerButtonClick" icon
@@ -52,16 +60,44 @@
 </template>
 <script lang="ts" setup>
 import { NAVIGATION_DRAWER_ROUTES } from "@/constants";
-import { useAuthStore } from "~/store";
+import { useAppStore, useAuthStore } from "~/store";
 
 const authStore = useAuthStore();
+const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
 const drawer = ref(true);
 const router = useRouter();
+const route = useRoute();
+
+const appStore = useAppStore();
+const { currentAppBarTitle } = storeToRefs(appStore);
 
 const onPowerButtonClick = () => {
   authStore.resetStore();
   router.replace("/auth/login");
 };
+
+onBeforeMount(async () => {
+  const currentRouteMatchingDrawerRoutes = NAVIGATION_DRAWER_ROUTES.find(
+    (drawer_route) => drawer_route.path == route.fullPath
+  );
+
+  if (currentRouteMatchingDrawerRoutes) {
+    appStore.setCurrentAppBarTitle(currentRouteMatchingDrawerRoutes.title);
+  }
+});
+
+watch(
+  () => route.fullPath,
+  () => {
+    const currentRouteMatchingDrawerRoutes = NAVIGATION_DRAWER_ROUTES.find(
+      (drawer_route) => drawer_route.path == route.fullPath
+    );
+
+    if (currentRouteMatchingDrawerRoutes) {
+      appStore.setCurrentAppBarTitle(currentRouteMatchingDrawerRoutes.title);
+    }
+  }
+);
 </script>
 
 <style scoped></style>

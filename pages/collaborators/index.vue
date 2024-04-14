@@ -56,7 +56,7 @@
         <template #item.action="{ item, index }">
           <v-btn
             size="small"
-            @click="openFormDialogForCampagne(item, index)"
+            @click="onDeleteIconClick(item)"
             icon
             variant="flat"
             ><v-icon color="primary"> mdi-delete </v-icon></v-btn
@@ -129,6 +129,22 @@
         </v-container>
       </template>
     </v-dialog>
+    <v-dialog v-model="openDeleteDialog" width="45%">
+      <template v-slot:default="{ isActive }">
+        <v-card>
+          <v-card-title class="bg-red">Annuler collaboration</v-card-title>
+          <v-card-text
+            >Etes vous sur de vouloir d'annuler la collaboration?</v-card-text
+          >
+          <v-card-actions class="d-flex justify-space-around">
+            <v-btn color="red" @click="deleleCollaborator()">Oui</v-btn>
+            <v-btn @click="openDeleteDialog = false" color="primary ">
+              Annuler</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -154,6 +170,7 @@ const authStore = useAuthStore();
 const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
 const { API_BASE_URL } = useRuntimeConfig().public;
 const { $toast } = useNuxtApp();
+const openDeleteDialog = ref(false);
 
 const loading = ref(false);
 const newCollaboration = ref({} as Collaboration);
@@ -285,6 +302,14 @@ function onAutocompleteSearchUpdate(searchText: String) {
 
 const errorMessages = ref([] as string[]);
 
+const collaborationToDelete = ref();
+
+const onDeleteIconClick = async (item: any) => {
+  console.log("delete icon is clicked ", item);
+  openDeleteDialog.value = true;
+  collaborationToDelete.value = item;
+};
+
 async function onCollaboratorFormSubmitPrevent() {
   const isFormValid = (await collaborationFormRef.value?.validate())?.valid;
 
@@ -362,5 +387,32 @@ async function onCollaboratorFormSubmitPrevent() {
       }
     }
   }
+}
+
+async function deleleCollaborator() {
+  const { data, pending, error, refresh, execute, status } = await useFetch(
+    `${API_BASE_URL}/api/collaborations/${collaborationToDelete.value.id}/`,
+    {
+      onResponseError({ request, response, options }) {
+        //
+      },
+      method: "delete",
+      headers: {
+        Authorization: "Bearer " + authenticationToken.value,
+      },
+    }
+  );
+  openDeleteDialog.value = false;
+  collaborationToDelete.value = null;
+
+  if (error.value) {
+    // console.log("error : ", error.value?.data);
+    console.log(error.value);
+    $toast.error("Erreur lors de la suppression !");
+  }
+
+  console.log(data.value);
+  $toast.success("Collaboration supprimé avec succès !");
+  return init();
 }
 </script>

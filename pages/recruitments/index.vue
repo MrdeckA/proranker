@@ -88,7 +88,7 @@
             recrutement?</v-card-text
           >
           <v-card-actions class="d-flex justify-space-around">
-            <v-btn color="red" @click="deleleRecruitment()">Supprimer</v-btn>
+            <v-btn color="red" @click="deleleRecruitment()">Oui</v-btn>
             <v-btn @click="openDeleteDialog = false" color="primary "
               >Annuler</v-btn
             >

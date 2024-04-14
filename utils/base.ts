@@ -14,8 +14,15 @@ export const isEmptyObject = (object?: unknown) => {
   );
 };
 
-export function isLink(str: string): string {
+export function isLink(str: string): boolean {
   const linkRegex = /^(ftp|http|https):\/\/[^ "]+$/;
 
-  return "fff";
+  return linkRegex.test(str);
+}
+
+export function isEmail(str: string): boolean {
+  const emailRegex =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  return emailRegex.test(str);
 }

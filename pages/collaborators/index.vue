@@ -73,6 +73,7 @@
         <v-container>
           <v-card class="pa-5" :title="`Nouveau collaborateur`">
             <v-form
+              ref="collaborationFormRef"
               @submit.prevent="onCollaboratorFormSubmitPrevent"
               validate-on="input"
               :fast-fail="true"
@@ -86,79 +87,40 @@
                   autocomplete="email"
                   id="email"
                   autocapitalize="off"
-                  v-model="invitedCollaborator"
+                  v-model="newCollaboration.invite"
                   required
                   label="Email"
-                  :rules="[ruleRequired, ruleEmail]"
+                  :rules="[ruleRequired]"
                   :items="copyOfUsersList"
+                  :error-messages="errorMessages"
                   item-title="email"
                   @update:search="onAutocompleteSearchUpdate"
                   hide-no-data
+                  item-value="id"
                 >
                 </v-combobox>
               </div>
-              <!-- <div class="mt-2 mb-1">
-                <v-text-field
+              <div class="mt-2 mb-1">
+                <v-select
                   density="comfortable"
-                  placeholder="Saisissez votre nom"
+                  placeholder="Chosissez un role"
                   prepend-inner-icon="mdi-account"
                   variant="outlined"
-                  autocomplete="email"
-                  id="last-name"
-                  autocapitalize="off"
-                  v-model="user.last_name"
+                  autocomplete="RoleCollaborateur"
+                  id="RoleCollaborateur"
+                  v-model="newCollaboration.role"
                   required
-                  label="Nom"
-                ></v-text-field>
-              </div>
-              <div class="mt-0 mb-0">
-                <v-text-field
-                  density="comfortable"
-                  placeholder="Saisissez votre prénom"
-                  prepend-inner-icon="mdi-account"
-                  variant="outlined"
-                  autocomplete="email"
-                  id="first-name"
-                  autocapitalize="off"
-                  v-model="user.first_name"
-                  required
-                  label="Prénom"
-                ></v-text-field>
+                  label="Role"
+                  :items="Object.values(RoleCollaborateur)"
+                  :rules="[ruleRequired]"
+                ></v-select>
               </div>
 
-              <div class="mb-1">
-                <v-text-field
-                  density="comfortable"
-                  :append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
-                  :type="visible ? 'text' : 'password'"
-                  placeholder="Entrez votre mot de passe"
-                  prepend-inner-icon="mdi-lock-outline"
-                  variant="outlined"
-                  @click:append-inner="visible = !visible"
-                  autocapitalize="off"
-                  autocomplete="password"
-                  v-model="user.password"
-                  required
-                  label="Mot de passe"
-                ></v-text-field>
-              </div>
-
-              <div class="mb-5">
-                <v-text-field
-                  density="comfortable"
-                  :append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
-                  :type="visible ? 'text' : 'password'"
-                  placeholder="Confirmez le mot de passe"
-                  prepend-inner-icon="mdi-lock-check-outline"
-                  variant="outlined"
-                  @click:append-inner="visible = !visible"
-                  v-model="user.confirmation_passsword"
-                  autocomplete="confirm-password"
-                  label="Confirmation mot de passe"
-                ></v-text-field>
-              </div> -->
               <div class="text-center">
-                <v-btn @click="onCollaboratorInvited" color="primary"
+                <v-btn
+                  :loading="loading"
+                  @click="onCollaboratorFormSubmitPrevent"
+                  color="primary"
                   >Inviter</v-btn
                 >
               </div>
@@ -174,6 +136,9 @@
 import { useAuthStore } from "~/store";
 import type { Collaboration, TUser } from "~/types";
 import { ruleEmail, ruleRequired } from "~/helpers/rules";
+import { RoleCollaborateur } from "~/constants";
+import { isString } from "lodash";
+import type { VForm } from "vuetify/components";
 
 definePageMeta({
   layout: "user",
@@ -187,7 +152,10 @@ const copyOfUsersList = ref([] as any[]);
 const serverItems = ref([] as any[]);
 const authStore = useAuthStore();
 const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
+const { API_BASE_URL } = useRuntimeConfig().public;
+const { $toast } = useNuxtApp();
 
+const loading = ref(false);
 const newCollaboration = ref({} as Collaboration);
 // function customFilter(itemTitle: any, queryText: any, item: any) {
 //   if (item.raw.index > 2) {
@@ -237,7 +205,9 @@ function openFormDialogForCampagne(item: any, index: number) {
   openFormDialog.value = true;
 }
 
-onBeforeMount(async () => {
+const collaborationFormRef: Ref<VForm | undefined> = ref();
+
+async function init() {
   const { data, error } = await useFetch(
     "http://127.0.0.1:8000/api/user/all/",
     {
@@ -271,6 +241,9 @@ onBeforeMount(async () => {
       headers: {
         Authorization: "Bearer " + authenticationToken.value,
       },
+      params: {
+        inviteur: authenticatedUser.value?.id,
+      },
     }
   );
 
@@ -285,7 +258,9 @@ onBeforeMount(async () => {
     // console.log("error : ", error.value?.data);
     // console.log(error.value);
   }
-});
+}
+
+await init();
 
 const onCollaboratorAddClick = () => {
   openFormDialog.value = true;
@@ -300,6 +275,7 @@ function getCollaborator(id: string) {
 }
 
 function onAutocompleteSearchUpdate(searchText: String) {
+  errorMessages.value = [];
   if (!isEmptyString(searchText)) {
     copyOfUsersList.value = usersList.value;
   } else {
@@ -307,11 +283,81 @@ function onAutocompleteSearchUpdate(searchText: String) {
   }
 }
 
-function onCollaboratorInvited() {
-  console.log(invitedCollaborator.value);
-}
+const errorMessages = ref([] as string[]);
 
-function onCollaboratorFormSubmitPrevent() {
-  console.log("submit form");
+async function onCollaboratorFormSubmitPrevent() {
+  const isFormValid = (await collaborationFormRef.value?.validate())?.valid;
+
+  if (isFormValid) {
+    if (isString(newCollaboration.value.invite)) {
+      if (isEmail(newCollaboration.value.invite)) {
+        loading.value = true;
+        const { data, error } = await useFetch(
+          `${API_BASE_URL}/api/collaborations/invite/?inviteur=${authenticatedUser.value?.id}&email=${newCollaboration.value.invite}&role=${newCollaboration.value.role}`,
+          {
+            onRequest({ request, options }) {
+              //
+            },
+            headers: {
+              Authorization: "Bearer " + authenticationToken.value,
+            },
+            watch: false,
+            retry: 0,
+          }
+        );
+        loading.value = false;
+
+        if (data.value) {
+          $toast.success(data.value.message);
+
+          await init();
+
+          openFormDialog.value = false;
+
+          console.log(data.value);
+        }
+
+        if (error.value) {
+          console.log(error.value.data);
+          $toast.error(error.value.data.message);
+        }
+      } else {
+        errorMessages.value = ["Entrez une adresse email valide"];
+      }
+    } else {
+      console.log(newCollaboration.value.invite?.email);
+      loading.value = true;
+
+      const { data, error } = await useFetch(
+        `${API_BASE_URL}/api/collaborations/invite/?inviteur=${authenticatedUser.value?.id}&invite=${newCollaboration.value.invite?.id}&role=${newCollaboration.value.role}`,
+        {
+          onRequest({ request, options }) {
+            //
+          },
+          headers: {
+            Authorization: "Bearer " + authenticationToken.value,
+          },
+          watch: false,
+          retry: 0,
+        }
+      );
+      loading.value = false;
+
+      if (data.value) {
+        $toast.success(data.value.message);
+
+        await init();
+
+        openFormDialog.value = false;
+
+        console.log(data.value);
+      }
+
+      if (error.value) {
+        console.log(error.value.data);
+        $toast.error(error.value.data.message);
+      }
+    }
+  }
 }
 </script>

@@ -60,6 +60,7 @@
               required
               :rules="rules"
               label="Email"
+              :readonly="email ? true : false"
             ></v-text-field>
           </div>
 
@@ -92,6 +93,7 @@
               required
               :rules="password_rules"
               label="Mot de passe"
+              :error-messages="errorMessages"
             ></v-text-field>
           </div>
 
@@ -108,6 +110,7 @@
               :rules="password_rules"
               autocomplete="confirm-password"
               label="Confirmation mot de passe"
+              :error-messages="errorMessages"
             ></v-text-field>
           </div>
 
@@ -154,7 +157,10 @@ const authStore = useAuthStore();
 const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
 
 const googleAuthLogin = ref(false);
+const { API_BASE_URL } = useRuntimeConfig().public;
 const { $toast } = useNuxtApp();
+const errorMessages = ref([] as string[]);
+
 //code à revoir
 //vraiment le bazar
 
@@ -215,6 +221,8 @@ const { isRegistering } = toRefs(props);
 let user: TUser = reactive({});
 
 async function submitForm() {
+  errorMessages.value = [];
+
   isFetching.value = true;
 
   const formValid = (await formRef.value?.validate())?.valid;
@@ -254,7 +262,6 @@ async function onLoginFormSubmitPrevent() {
   );
 
   if (data.value) {
-    isFetching.value = false;
     console.log(data.value);
     authStore.updateAuthenticatedUser(data.value.user);
     authStore.updateAuthenticationToken(data.value.token);
@@ -271,7 +278,48 @@ async function onLoginFormSubmitPrevent() {
     }
     return $toast.error("Erreur lors de la requête ! Veuillez rééssayer.");
   }
+
   // console.log("onLoginFormSubmitPrevent", user);
+}
+
+const inviteur = ref(route.query.inviteur);
+const role = ref(route.query.role);
+const email = ref(route.query.email);
+
+onBeforeMount(() => {
+  if (email) {
+    user.email = email.value as string;
+  }
+});
+
+async function addNewCollaborator(
+  inviteur: string,
+  invite: string,
+  role: string
+) {
+  isFetching.value = true;
+
+  const { data, error } = await useFetch(
+    `${API_BASE_URL}/api/collaborations/invite/?inviteur=${inviteur}&invite=${invite}&role=${role}&statut_invitation=Acceptée`,
+    {
+      onRequest({ request, options }) {
+        //
+      },
+
+      watch: false,
+      retry: 0,
+    }
+  );
+
+  if (data.value) {
+    isFetching.value = false;
+
+    console.log(data.value);
+  }
+
+  if (error.value) {
+    console.log(error.value.data);
+  }
 }
 
 async function onRegistrationFormSubmitPrevent() {
@@ -279,8 +327,10 @@ async function onRegistrationFormSubmitPrevent() {
   isFetching.value = true;
   console.log(user);
   if (user.password != user.confirmation_passsword) {
-    $toast.warning("Les deux mots de passe doivent êtres identiques");
     isFetching.value = false;
+    errorMessages.value = ["Les deux mots de passe doivent êtres identiques"];
+
+    return $toast.warning("Les deux mots de passe doivent êtres identiques");
   }
   // emit(EnikejiEvents.LOGIN_FORM_SUBMIT, user.value as IUser)
   // return navigateTo("/menu");
@@ -303,9 +353,17 @@ async function onRegistrationFormSubmitPrevent() {
   );
 
   if (data.value) {
-    isFetching.value = false;
     console.log(data.value);
     $toast.success("Inscription Réussie !");
+
+    if (inviteur.value) {
+      await addNewCollaborator(
+        inviteur.value as string,
+        data.value.id as string,
+        role.value as string
+      );
+    }
+
     setTimeout(() => {
       router.replace("/auth/login");
     }, 2000);

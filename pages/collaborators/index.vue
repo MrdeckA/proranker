@@ -308,6 +308,8 @@ async function onCollaboratorFormSubmitPrevent() {
         loading.value = false;
 
         if (data.value) {
+          newCollaboration.value = {};
+
           $toast.success(data.value.message);
 
           await init();
@@ -344,6 +346,7 @@ async function onCollaboratorFormSubmitPrevent() {
       loading.value = false;
 
       if (data.value) {
+        newCollaboration.value = {};
         $toast.success(data.value.message);
 
         await init();

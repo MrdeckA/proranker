@@ -19,8 +19,8 @@
           class="me-5"
         ></v-text-field>
 
-        <v-btn @click="onCollaboratorAddClick" color="primary"
-          >Ajouter un collaborateur</v-btn
+        <v-btn class="text-none" @click="onCollaboratorAddClick" color="primary"
+          >Inviter un collaborateur</v-btn
         >
       </v-card-title>
 
@@ -68,7 +68,7 @@
         </template></v-data-table
       ></v-card
     >
-    <v-dialog v-model="openFormDialog" width="750">
+    <v-dialog v-model="openFormDialog" width="600">
       <template v-slot:default="{ isActive }">
         <v-container>
           <v-card class="pa-5" :title="`Nouveau collaborateur`">
@@ -77,8 +77,8 @@
               validate-on="input"
               :fast-fail="true"
             >
-              <div class="mb-0">
-                <v-text-field
+              <div class="my-2">
+                <v-autocomplete
                   density="comfortable"
                   placeholder="Entrez votre addresse Email"
                   prepend-inner-icon="mdi-email-outline"
@@ -86,12 +86,18 @@
                   autocomplete="email"
                   id="email"
                   autocapitalize="off"
-                  v-model="user.email"
+                  v-model="collaborator"
                   required
                   label="Email"
-                ></v-text-field>
+                  :rules="[ruleRequired]"
+                  :items="copyOfUsersList"
+                  item-title="email"
+                  @update:search="onAutocompleteSearchUpdate"
+                  hide-no-data
+                >
+                </v-autocomplete>
               </div>
-              <div class="mt-2 mb-1">
+              <!-- <div class="mt-2 mb-1">
                 <v-text-field
                   density="comfortable"
                   placeholder="Saisissez votre nom"
@@ -150,9 +156,11 @@
                   autocomplete="confirm-password"
                   label="Confirmation mot de passe"
                 ></v-text-field>
-              </div>
+              </div> -->
               <div class="text-center">
-                <v-btn color="primary">Ajouter</v-btn>
+                <v-btn @click="onCollaboratorInvited" color="primary"
+                  >Inviter</v-btn
+                >
               </div>
             </v-form>
           </v-card>
@@ -165,6 +173,7 @@
 <script lang="ts" setup>
 import { useAuthStore } from "~/store";
 import type { TUser } from "~/types";
+import { ruleEmail, ruleRequired } from "~/helpers/rules";
 
 definePageMeta({
   layout: "user",
@@ -174,9 +183,21 @@ const openFormDialog = ref(false);
 const collaborateurs = ref([] as any[]);
 const campagnesList = ref([] as any[]);
 const usersList = ref([] as any[]);
+const copyOfUsersList = ref([] as any[]);
 const serverItems = ref([] as any[]);
 const authStore = useAuthStore();
 const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
+
+const collaborator = ref();
+
+// function customFilter(itemTitle: any, queryText: any, item: any) {
+//   if (item.raw.index > 2) {
+//     return false;
+//   }
+
+//   return true;
+// }
+
 const headers = ref([
   {
     title: "#",
@@ -188,6 +209,7 @@ const headers = ref([
   { title: "Prénom", key: "prenom", align: "start" },
   { title: "Email", key: "email", align: "start" },
   { title: "Role", key: "role", align: "start" },
+  { title: "Statut Invitation", key: "statut_invitation", align: "start" },
   { title: "Action", key: "action", align: "center" },
 ]);
 
@@ -231,12 +253,15 @@ onBeforeMount(async () => {
 
   if (data.value) {
     usersList.value = data.value.results;
+    usersList.value = usersList.value.map((item, index) => {
+      return { ...item, index };
+    });
     console.log(data.value);
   }
 
   if (error.value) {
     // console.log("error : ", error.value?.data);
-    // console.log(error.value);
+    console.log(error.value.data);
   }
   const { data: resData, error: resError } = await useFetch(
     "http://127.0.0.1:8000/api/collaborations/",
@@ -273,5 +298,17 @@ const visible = ref(false);
 
 function getCollaborator(id: string) {
   return usersList.value.find((u) => u.id == id);
+}
+
+function onAutocompleteSearchUpdate(searchText: String) {
+  if (!isEmptyString(searchText)) {
+    copyOfUsersList.value = usersList.value;
+  } else {
+    copyOfUsersList.value = [];
+  }
+}
+
+function onCollaboratorInvited() {
+  console.log(collaborator.value);
 }
 </script>

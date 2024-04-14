@@ -4,19 +4,24 @@
     <v-card
       width="80%"
       class="pa-5 mx-auto"
-      title="Détails recruitement (Lecture seule)"
+      :title="`${isUpdate ? 'Modifier recruitement : ' : 'Détails recruitement : '} ${isUpdate ? '' : '(Lecture seule)'} ${campagneToEdit.nom}`"
     >
       <template #append>
-        <v-btn class="me-5" color="primary" @click="openFormDialog = true"
+        <v-btn
+          v-if="!isUpdate"
+          class="me-5"
+          color="primary"
+          @click="openFormDialog = true"
           >Afficher résultats</v-btn
         >
         <v-btn
+          v-if="!isUpdate"
           color="primary"
           @click="startPrediction()"
           icon="mdi-play"
         ></v-btn>
 
-        <v-btn variant="text" icon @click="isUpdate = true">
+        <v-btn v-if="!isUpdate" variant="text" icon @click="isUpdate = true">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
       </template>
@@ -49,14 +54,16 @@
           <v-list>
             <v-list-subheader>
               Critères
-              <!-- <v-btn
-                @click="openFormDialog = true"
+
+              <v-btn
+                v-if="isUpdate"
+                @click="openDefineCriteriaFormDialog = true"
                 class="ms-5"
                 color="primary"
                 size="x-small"
                 icon
                 ><v-icon>mdi-plus</v-icon></v-btn
-              > -->
+              >
             </v-list-subheader>
 
             <v-list-item v-if="isDefinedValue(campagneToEdit.degrees)"
@@ -266,6 +273,166 @@
     <!-- <pre>
       {{ sorteredRanking }}
     </pre> -->
+
+    <!-- Criteria Dialog-->
+
+    <v-dialog v-model="openDefineCriteriaFormDialog" width="750">
+      <template v-slot:default="{ isActive }">
+        <v-container>
+          <v-card class="px-0" title="Ajout d'un nouveau critère">
+            <!-- <template #append>
+              <v-btn
+                class="ma-2"
+                color="primary"
+                @click="isActive.value = false"
+                >Retour</v-btn
+              >
+            </template> -->
+            <v-form @submit.prevent="onNewCriteriaFormSubmit">
+              <v-row class="mx-2">
+                <v-col>
+                  <v-autocomplete
+                    v-model="campagneToEditType"
+                    label="Type"
+                    variant="outlined"
+                    density="comfortable"
+                    :items="criteriaTypes"
+                    required
+                  ></v-autocomplete>
+                </v-col>
+                <v-col>
+                  <!--new-->
+
+                  <v-autocomplete
+                    v-if="campagneToEditType === 'Certifications'"
+                    v-model="campagneToEdit.certifications"
+                    label="Valeur"
+                    variant="outlined"
+                    density="comfortable"
+                    :items="[
+                      'google',
+                      'cisco',
+                      'amazon',
+                      'Oracle',
+                      'facebook',
+                      'Blockchain developper',
+                    ]"
+                    multiple
+                    required
+                  >
+                  </v-autocomplete>
+
+                  <v-autocomplete
+                    v-if="campagneToEditType === 'Compétences'"
+                    v-model="campagneToEdit.skills"
+                    label="Valeur"
+                    variant="outlined"
+                    density="comfortable"
+                    :items="[
+                      'Java',
+                      'Python',
+                      'Langage C',
+                      'Node js',
+                      'MongoDB',
+                      'HTML',
+                      'CSS',
+                      'C++',
+                      'Next',
+                      'React',
+                      'Typescript',
+                      'JavaScript',
+                      'ethers.js',
+                      'IPFS',
+                      'Web3.js',
+                    ]"
+                    multiple
+                    required
+                  >
+                  </v-autocomplete>
+
+                  <v-autocomplete
+                    v-if="campagneToEditType === 'Diplomes'"
+                    v-model="campagneToEdit.degrees"
+                    label="Valeur"
+                    variant="outlined"
+                    density="comfortable"
+                    :items="['BAC', 'Licence', 'Master']"
+                    multiple
+                    required
+                  >
+                  </v-autocomplete>
+
+                  <v-autocomplete
+                    v-if="campagneToEditType === 'Langues'"
+                    v-model="campagneToEdit.languages"
+                    label="Valeur"
+                    variant="outlined"
+                    density="comfortable"
+                    :items="[
+                      'Français',
+                      'Anglais',
+                      'Mandarin',
+                      'Espagnol',
+                      'Portugais',
+                      'Japonais',
+                      'Espagnol',
+                    ]"
+                    multiple
+                    required
+                  >
+                  </v-autocomplete>
+
+                  <v-text-field
+                    v-if="
+                      campagneToEditType === 'Nombre minimum d\'expériences'
+                    "
+                    v-model="campagneToEdit.minimum_number_of_experiences"
+                    label="Valeur"
+                    variant="outlined"
+                    density="comfortable"
+                    required
+                    type="number"
+                  ></v-text-field>
+                  <v-text-field
+                    v-if="
+                      campagneToEditType ===
+                      'Nombre minimum d\'années d\'expériences'
+                    "
+                    v-model="
+                      campagneToEdit.minimum_number_of_years_of_experience
+                    "
+                    label="Valeur"
+                    variant="outlined"
+                    density="comfortable"
+                    required
+                    type="number"
+                  ></v-text-field>
+                  <v-text-field
+                    v-if="campagneToEditType === 'Nombre minimum de langues'"
+                    v-model="campagneToEdit.minimum_number_of_languages"
+                    label="Valeur"
+                    variant="outlined"
+                    density="comfortable"
+                    required
+                    type="number"
+                  ></v-text-field>
+
+                  <!--new-->
+                </v-col>
+              </v-row>
+              <div class="text-center">
+                <v-btn
+                  class="ma-5"
+                  color="primary"
+                  @click="openFormDialog = false"
+                  >Ok</v-btn
+                >
+              </div>
+            </v-form>
+          </v-card>
+        </v-container>
+      </template>
+    </v-dialog>
   </v-container>
 </template>
 <script lang="ts" setup>
@@ -294,6 +461,8 @@ const route = useRoute();
 const tableData = ref([
   // Vos données de tableau ici
 ]);
+
+const openDefineCriteriaFormDialog = ref(false);
 
 const tableColumns = ref([
   // Vos colonnes de tableau ici

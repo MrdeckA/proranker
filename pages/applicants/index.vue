@@ -45,7 +45,7 @@
         <template #item.action="{ item, index }">
           <v-btn
             size="small"
-            :to="`/recruitments/${item.campagne}/${item.id}`"
+            :to="`/recruitments/${item.campagne}/applicants/${item.id}`"
             icon
             variant="flat"
             ><v-icon color="primary"> mdi-eye </v-icon></v-btn

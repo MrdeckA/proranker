@@ -19,7 +19,7 @@
           class="me-5"
         ></v-text-field>
 
-        <v-btn :to="'/recruitments/add'" color="primary"
+        <v-btn class="text-none" :to="'/recruitments/add'" color="primary"
           >Nouveau Recrutement</v-btn
         >
       </v-card-title>

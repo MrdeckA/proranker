@@ -40,9 +40,7 @@
       <!-- <v-btn prepend-icon="mdi-bell" class="me-5">Notification</v-btn> -->
       <v-btn icon to="/profile" class="me-5">
         <v-avatar color="primary"
-          >{{
-            logolify(`${authenticatedUser?.prenom} ${authenticatedUser?.nom}`)
-          }}
+          >{{ logolify(authenticatedUser?.nom_complet as string) }}
         </v-avatar></v-btn
       >
 

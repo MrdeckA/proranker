@@ -73,12 +73,12 @@
         <v-container>
           <v-card class="pa-5" :title="`Nouveau collaborateur`">
             <v-form
-              @submit.prevent="console.log('ok')"
+              @submit.prevent="onCollaboratorFormSubmitPrevent"
               validate-on="input"
               :fast-fail="true"
             >
               <div class="my-2">
-                <v-autocomplete
+                <v-combobox
                   density="comfortable"
                   placeholder="Entrez votre addresse Email"
                   prepend-inner-icon="mdi-email-outline"
@@ -86,16 +86,16 @@
                   autocomplete="email"
                   id="email"
                   autocapitalize="off"
-                  v-model="collaborator"
+                  v-model="invitedCollaborator"
                   required
                   label="Email"
-                  :rules="[ruleRequired]"
+                  :rules="[ruleRequired, ruleEmail]"
                   :items="copyOfUsersList"
                   item-title="email"
                   @update:search="onAutocompleteSearchUpdate"
                   hide-no-data
                 >
-                </v-autocomplete>
+                </v-combobox>
               </div>
               <!-- <div class="mt-2 mb-1">
                 <v-text-field
@@ -172,7 +172,7 @@
 
 <script lang="ts" setup>
 import { useAuthStore } from "~/store";
-import type { TUser } from "~/types";
+import type { Collaboration, TUser } from "~/types";
 import { ruleEmail, ruleRequired } from "~/helpers/rules";
 
 definePageMeta({
@@ -188,8 +188,7 @@ const serverItems = ref([] as any[]);
 const authStore = useAuthStore();
 const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
 
-const collaborator = ref();
-
+const newCollaboration = ref({} as Collaboration);
 // function customFilter(itemTitle: any, queryText: any, item: any) {
 //   if (item.raw.index > 2) {
 //     return false;
@@ -309,6 +308,10 @@ function onAutocompleteSearchUpdate(searchText: String) {
 }
 
 function onCollaboratorInvited() {
-  console.log(collaborator.value);
+  console.log(invitedCollaborator.value);
+}
+
+function onCollaboratorFormSubmitPrevent() {
+  console.log("submit form");
 }
 </script>

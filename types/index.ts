@@ -1,3 +1,4 @@
+import type { RoleCollaborateur, StatutInvitation } from "~/constants";
 import type { FlatJSONLike, Nullable } from "./base";
 import * as models from "@/models";
 
@@ -70,3 +71,10 @@ export type SideNavigationRoute = {
 
 export type TAgency = Omit<models.Agency, "prototype">;
 export type TUser = Omit<models.User, "prototype">;
+
+export interface Collaboration {
+  inviteur?: TUser;
+  invite?: TUser;
+  role?: RoleCollaborateur;
+  statut_invitation?: StatutInvitation;
+}

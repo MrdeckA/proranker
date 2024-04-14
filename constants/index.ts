@@ -51,3 +51,14 @@ export const NAVIGATION_DRAWER_ROUTES = [
 ];
 
 export const AppPublicRoutes = ["index", "about", "auth"];
+
+export enum StatutInvitation {
+  EN_ATTENTE = "En attente",
+  ACCEPTEE = "Acceptée",
+  EXPIREE = "Expirée",
+}
+
+export enum RoleCollaborateur {
+  LECTURE = "Lecture",
+  ECRITURE = "Ecriture",
+}

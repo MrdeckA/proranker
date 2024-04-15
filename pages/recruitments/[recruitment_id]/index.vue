@@ -8,20 +8,25 @@
     >
       <template #append>
         <v-btn
-          v-if="!isUpdate"
+          v-if="!isUpdate && !isNotRankedRecruitment"
           class="me-5"
           color="primary"
           @click="openFormDialog = true"
           >Afficher résultats</v-btn
         >
         <v-btn
-          v-if="!isUpdate && isNotRankedRecruitment"
+          v-if="!isUpdate && isNotRankedRecruitment && !noUpdate"
           color="primary"
           @click="startPrediction()"
           icon="mdi-play"
         ></v-btn>
 
-        <v-btn v-if="!isUpdate" variant="text" icon @click="isUpdate = true">
+        <v-btn
+          v-if="!isUpdate && !noUpdate"
+          variant="text"
+          icon
+          @click="isUpdate = true"
+        >
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
       </template>
@@ -50,11 +55,10 @@
           ></v-textarea
         ></v-col>
 
-        <v-col class="pa-0 ma-0">
+        <v-col class="border">
           <v-list>
-            <v-list-subheader>
-              Critères
-
+            <v-list-subheader
+              >Critères
               <v-btn
                 v-if="isUpdate"
                 @click="openDefineCriteriaFormDialog = true"
@@ -63,18 +67,33 @@
                 size="x-small"
                 icon
                 ><v-icon>mdi-plus</v-icon></v-btn
-              >
-            </v-list-subheader>
+              ></v-list-subheader
+            >
+
+            <v-list-item v-if="isDefinedValue(campagneToEdit.certifications)"
+              >Certifications : {{ campagneToEdit.certifications }}
+
+              <template #append>
+                <v-btn
+                  v-if="isUpdate"
+                  @click="removeCriteria('certifications')"
+                  variant="text"
+                  size="small"
+                  icon="mdi-delete"
+                ></v-btn>
+              </template>
+            </v-list-item>
 
             <v-list-item v-if="isDefinedValue(campagneToEdit.degrees)"
               >Diplomes : {{ campagneToEdit.degrees }}
 
               <template #append>
                 <v-btn
+                  v-if="isUpdate"
+                  @click="removeCriteria('degrees')"
                   variant="text"
                   size="small"
                   icon="mdi-delete"
-                  v-if="isUpdate"
                 ></v-btn>
               </template>
             </v-list-item>
@@ -85,10 +104,11 @@
 
               <template #append>
                 <v-btn
+                  v-if="isUpdate"
+                  @click="removeCriteria('minimum_number_of_languages')"
                   variant="text"
                   size="small"
                   icon="mdi-delete"
-                  v-if="isUpdate"
                 ></v-btn>
               </template>
             </v-list-item>
@@ -98,10 +118,11 @@
 
               <template #append>
                 <v-btn
+                  v-if="isUpdate"
+                  @click="removeCriteria('minimum_number_of_experiences')"
                   variant="text"
                   size="small"
                   icon="mdi-delete"
-                  v-if="isUpdate"
                 ></v-btn>
               </template>
             </v-list-item>
@@ -110,10 +131,11 @@
 
               <template #append>
                 <v-btn
+                  v-if="isUpdate"
+                  @click="removeCriteria('languages')"
                   variant="text"
                   size="small"
                   icon="mdi-delete"
-                  v-if="isUpdate"
                 ></v-btn>
               </template>
             </v-list-item>
@@ -122,29 +144,21 @@
 
               <template #append>
                 <v-btn
+                  v-if="isUpdate"
+                  @click="removeCriteria('skills')"
                   variant="text"
                   size="small"
                   icon="mdi-delete"
-                  v-if="isUpdate"
-                ></v-btn>
-              </template>
-            </v-list-item>
-
-            <v-list-item v-if="isDefinedValue(campagneToEdit.certifications)">
-              Certifications : {{ campagneToEdit.certifications }}
-
-              <template #append>
-                <v-btn
-                  variant="text"
-                  size="small"
-                  icon="mdi-delete"
-                  v-if="isUpdate"
                 ></v-btn>
               </template>
             </v-list-item>
           </v-list>
         </v-col>
-        <div class="text-center d-flex justify-space-around" v-if="!isUpdate">
+
+        <div
+          class="text-center d-flex justify-space-around"
+          v-if="!isUpdate && !noUpdate"
+        >
           <v-btn
             color="primary"
             @click="isUpdate = true"
@@ -154,7 +168,7 @@
           <v-btn color="red" prepend-icon="mdi-delete">Supprimer</v-btn>
         </div>
 
-        <div class="text-center" v-else>
+        <div class="text-center" v-if="isUpdate">
           <v-btn
             class="me-10"
             color="red"
@@ -164,8 +178,9 @@
           >
           <v-btn
             color="primary"
-            @click="isUpdate = true"
+            @click="onUpdateSave"
             prepend-icon="mdi-content-save"
+            :loading="loading"
             >Sauvegarder</v-btn
           >
         </div>
@@ -465,9 +480,9 @@ const route = useRoute();
 const tableData = ref([
   // Vos données de tableau ici
 ]);
-
+const router = useRouter();
 const { API_BASE_URL } = useRuntimeConfig().public;
-
+const loading = ref(false);
 const openDefineCriteriaFormDialog = ref(false);
 
 const tableColumns = ref([
@@ -475,17 +490,17 @@ const tableColumns = ref([
 ]);
 const criteriaTypes = ref(
   [
-    "A des prix",
     "Nombre minimum d'expériences",
-    "A des certifications",
+    "Certifications",
     "Compétences",
     "Langues",
     "Nombre minimum de langues",
-    "Diplome minimum",
+    "Diplomes",
   ].sort()
 );
 
 const isUpdate = ref(false);
+const noUpdate = ref(false);
 
 const binariesItems = ref([
   {
@@ -611,6 +626,13 @@ async function init() {
 
   if (data.value) {
     campagneToEdit.value = data.value;
+    campagneToEdit.value.certifications = JSON.parse(
+      campagneToEdit.value.certifications
+    );
+    campagneToEdit.value.skills = JSON.parse(campagneToEdit.value.skills);
+    campagneToEdit.value.degrees = JSON.parse(campagneToEdit.value.degrees);
+    campagneToEdit.value.languages = JSON.parse(campagneToEdit.value.languages);
+
     console.log(data.value);
     appStore.setCurrentAppBarTitle(
       `Détails sur le recrutement ${campagneToEdit.value.nom}`
@@ -732,6 +754,9 @@ onBeforeMount(() => {
   if (route.query.update === "true") {
     isUpdate.value = true;
   }
+  if (route.query.noUpdate === "true") {
+    noUpdate.value = true;
+  }
 });
 
 // watch(dialog, () => {
@@ -766,4 +791,55 @@ async function startPrediction() {
     console.log(error.value);
   }
 }
+
+const removeCriteria = (key: string) => {
+  campagneToEdit.value[key] = [];
+};
+
+const onUpdateSave = async () => {
+  loading.value = true;
+  console.log(campagneToEdit.value);
+  const copyOfcampagneToEdit = ref(campagneToEdit.value);
+  copyOfcampagneToEdit.value.certifications = JSON.stringify(
+    campagneToEdit.value.certifications
+  );
+  copyOfcampagneToEdit.value.degrees = JSON.stringify(
+    campagneToEdit.value.degrees
+  );
+  copyOfcampagneToEdit.value.skills = JSON.stringify(
+    campagneToEdit.value.skills
+  );
+  copyOfcampagneToEdit.value.languages = JSON.stringify(
+    campagneToEdit.value.languages
+  );
+  const { data: resData, error: resError } = await useFetch(
+    `${API_BASE_URL}/api/campagnes/${route.params.recruitment_id}/`,
+    {
+      // query: {
+      //   user: "1",
+      // },
+      method: "patch",
+      onRequest({ request, options }) {
+        //
+      },
+      body: copyOfcampagneToEdit.value,
+      headers: {
+        Authorization: "Bearer " + authenticationToken.value,
+      },
+    }
+  );
+  loading.value = false;
+
+  if (resData.value) {
+    console.log(resData.value);
+    $toast.success("Recrutement mis à jour avec succès");
+    setTimeout(() => {
+      reloadNuxtApp();
+    }, 2000);
+  }
+
+  if (resError.value) {
+    console.log(resError.value.data);
+  }
+};
 </script>

@@ -46,10 +46,22 @@
           <v-icon color="primary"> mdi-dots-vertical </v-icon>
         </v-btn> -->
         </template>
+        <template #item.user="{ item, index }">
+          <span class="text-truncate"
+            >{{ findOneUser(item.user).nom_complet }}
+          </span>
+          <!-- <v-btn icon variant="flat">
+          <v-icon color="primary"> mdi-dots-vertical </v-icon>
+        </v-btn> -->
+        </template>
         <template #item.action="{ item }">
           <v-btn
             size="small"
-            :to="`/recruitments/${item.id}`"
+            :to="
+              item.role == 'Lecture'
+                ? `/recruitments/${item.id}?noUpdate=true`
+                : `/recruitments/${item.id}`
+            "
             icon
             variant="flat"
             ><v-icon color="primary"> mdi-eye </v-icon></v-btn
@@ -59,6 +71,7 @@
             size="small"
             icon
             variant="flat"
+            v-if="!item.role || item.role == 'Ecriture'"
           >
             <v-icon color="primary"> mdi-pencil </v-icon>
           </v-btn>
@@ -68,6 +81,7 @@
             size="small"
             icon
             variant="flat"
+            v-if="!item.role || item.role == 'Ecriture'"
           >
             <v-icon color="primary"> mdi-delete </v-icon>
           </v-btn>
@@ -111,6 +125,9 @@ const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
 const serverItems = ref([] as any[]);
 const { $toast } = useNuxtApp();
 const openDeleteDialog = ref(false);
+const usersList = ref([] as any[]);
+const collaborations = ref([] as any[]);
+
 const tableHeaders = ref([
   {
     title: "#",
@@ -124,6 +141,12 @@ const tableHeaders = ref([
     title: "Intitulé du poste",
     width: "25%",
     key: "intitule_poste",
+    align: "start",
+  },
+  {
+    title: "Auteur",
+    width: "25%",
+    key: "user",
     align: "start",
   },
   { title: "Action", key: "action", align: "center" },
@@ -153,7 +176,90 @@ async function loadRecruitments() {
     console.log(error.value);
   }
 }
+
+async function init() {
+  const { data: data1, error: error1 } = await useFetch(
+    "http://127.0.0.1:8000/api/user/all/",
+    {
+      onRequest({ request, options }) {
+        //
+      },
+      headers: {
+        Authorization: "Bearer " + authenticationToken.value,
+      },
+    }
+  );
+
+  if (data1.value) {
+    usersList.value = data1.value.results;
+    usersList.value = usersList.value.map((item, index) => {
+      return { ...item, index };
+    });
+    console.log(data1.value);
+  }
+
+  if (error1.value) {
+    console.log(error1.value.data);
+  }
+
+  const { data: resData, error: resError } = await useFetch(
+    "http://127.0.0.1:8000/api/collaborations/",
+    {
+      onRequest({ request, options }) {
+        //
+      },
+      headers: {
+        Authorization: "Bearer " + authenticationToken.value,
+      },
+      params: {
+        invite: authenticatedUser.value?.id,
+      },
+    }
+  );
+
+  const selectedCampagne = ref();
+
+  if (resData.value) {
+    collaborations.value = resData.value.results;
+    collaborations.value.forEach(async (collaboration) => {
+      console.log(collaboration.inviteur);
+      if (collaboration.inviteur) {
+        const { data, pending, error, refresh, execute, status } =
+          await useFetch(
+            `http://127.0.0.1:8000/api/campagnes/?user=${collaboration.inviteur}`,
+            {
+              onResponseError({ request, response, options }) {
+                //
+              },
+
+              headers: {
+                Authorization: "Bearer " + authenticationToken.value,
+              },
+            }
+          );
+
+        if (data.value) {
+          data.value.results.forEach((result) => {
+            serverItems.value.push({ ...result, role: collaboration.role });
+          });
+        }
+
+        if (error.value) {
+          // console.log("error : ", error.value?.data);
+          console.log(error.value);
+        }
+      }
+    });
+    console.log(collaborations.value);
+  }
+
+  if (resError.value) {
+    console.log(resError.value.data);
+  }
+}
+
 await loadRecruitments();
+await init();
 
 const itemsPerPage = ref(15);
 const search = ref("");
@@ -192,5 +298,9 @@ async function deleleRecruitment() {
     console.log(error.value);
     $toast.error("Erreur lors de la suppression !");
   }
+}
+
+function findOneUser(id: string) {
+  return usersList.value.find((user) => user.id == id);
 }
 </script>

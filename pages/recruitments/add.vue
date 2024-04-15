@@ -83,7 +83,12 @@
               >Certifications : {{ campagneToEdit.certifications }}
 
               <template #append>
-                <v-btn variant="text" size="small" icon="mdi-delete"></v-btn>
+                <v-btn
+                  @click="removeCriteria('certifications')"
+                  variant="text"
+                  size="small"
+                  icon="mdi-delete"
+                ></v-btn>
               </template>
             </v-list-item>
 
@@ -91,7 +96,12 @@
               >Diplomes : {{ campagneToEdit.degrees }}
 
               <template #append>
-                <v-btn variant="text" size="small" icon="mdi-delete"></v-btn>
+                <v-btn
+                  @click="removeCriteria('degrees')"
+                  variant="text"
+                  size="small"
+                  icon="mdi-delete"
+                ></v-btn>
               </template>
             </v-list-item>
             <v-list-item
@@ -100,7 +110,12 @@
               {{ campagneToEdit.minimum_number_of_languages }}
 
               <template #append>
-                <v-btn variant="text" size="small" icon="mdi-delete"></v-btn>
+                <v-btn
+                  @click="removeCriteria('minimum_number_of_languages')"
+                  variant="text"
+                  size="small"
+                  icon="mdi-delete"
+                ></v-btn>
               </template>
             </v-list-item>
             <v-list-item v-if="campagneToEdit.minimum_number_of_experiences"
@@ -108,21 +123,36 @@
               {{ campagneToEdit.minimum_number_of_experiences }}
 
               <template #append>
-                <v-btn variant="text" size="small" icon="mdi-delete"></v-btn>
+                <v-btn
+                  @click="removeCriteria('minimum_number_of_experiences')"
+                  variant="text"
+                  size="small"
+                  icon="mdi-delete"
+                ></v-btn>
               </template>
             </v-list-item>
             <v-list-item v-if="campagneToEdit.languages"
               >Langues : {{ campagneToEdit.languages }}
 
               <template #append>
-                <v-btn variant="text" size="small" icon="mdi-delete"></v-btn>
+                <v-btn
+                  @click="removeCriteria('languages')"
+                  variant="text"
+                  size="small"
+                  icon="mdi-delete"
+                ></v-btn>
               </template>
             </v-list-item>
             <v-list-item v-if="campagneToEdit.skills"
               >Compétences : {{ campagneToEdit.skills }}
 
               <template #append>
-                <v-btn variant="text" size="small" icon="mdi-delete"></v-btn>
+                <v-btn
+                  @click="removeCriteria('skills')"
+                  variant="text"
+                  size="small"
+                  icon="mdi-delete"
+                ></v-btn>
               </template>
             </v-list-item>
             <v-list-item
@@ -131,7 +161,12 @@
               A des Certification : {{ campagneToEdit.has_certifications }}
 
               <template #append>
-                <v-btn variant="text" size="small" icon="mdi-delete"></v-btn>
+                <v-btn
+                  @click="removeCriteria('has_certifications')"
+                  variant="text"
+                  size="small"
+                  icon="mdi-delete"
+                ></v-btn>
               </template>
             </v-list-item>
             <v-list-item v-if="isDefinedValue(campagneToEdit.has_awards)">
@@ -433,11 +468,10 @@ enum Correspondance {
 }
 
 watch(campagneToEdit.value, () => {
-  criteriaTypes.value = filtrerClésDéfinies(
-    criteriaTypes.value,
-    campagneToEdit.value
-  ).sort();
-
+  // criteriaTypes.value = filtrerClésDéfinies(
+  //   criteriaTypes.value,
+  //   campagneToEdit.value
+  // ).sort();
   // console.log(criteriaTypes.value);
   // criteriaTypes.value.forEach((criteria) => {
   //   if (isDefinedValue(campagneToEdit.value[criteria])) {
@@ -454,5 +488,7 @@ function filtrerClésDéfinies(tableau: string[], objet: any): string[] {
   return clésDéfinies;
 }
 
-// console.log(isDefinedValue(campagneToEdit.value["has_awards"]));
+const removeCriteria = (key: string) => {
+  delete campagneToEdit.value[key];
+};
 </script>

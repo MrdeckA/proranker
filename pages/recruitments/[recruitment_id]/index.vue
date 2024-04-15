@@ -15,7 +15,7 @@
           >Afficher résultats</v-btn
         >
         <v-btn
-          v-if="!isUpdate"
+          v-if="!isUpdate && isNotRankedRecruitment"
           color="primary"
           @click="startPrediction()"
           icon="mdi-play"
@@ -206,26 +206,28 @@
           <v-icon color="primary"> mdi-dots-vertical </v-icon>
         </v-btn> -->
               </template>
-              <!-- <template #item.action="{ item }">
-          <v-btn
-            size="small"
-            :to="`/recruitments/${item.id}`"
-            icon
-            variant="flat"
-            ><v-icon color="primary"> mdi-eye </v-icon></v-btn
-          >
-          <v-btn size="small" icon variant="flat">
-            <v-icon color="primary"> mdi-pencil </v-icon>
-          </v-btn>
+              <template #item.action="{ item }">
+                <!-- <v-btn
+                  size="small"
+                  :href="`${API_BASE_URL}${item.fichier_sauvegarde}`"
+                  icon
+                  target="_blank"
+                  variant="flat"
+                >
+                  <v-icon color="primary"> mdi-eye </v-icon></v-btn
+                > -->
+                <!-- <v-btn size="small" icon variant="flat">
+                  <v-icon color="primary"> mdi-pencil </v-icon>
+                </v-btn>
 
-          <v-btn size="small" icon variant="flat">
-            <v-icon color="primary"> mdi-delete </v-icon>
-          </v-btn>
+                <v-btn size="small" icon variant="flat">
+                  <v-icon color="primary"> mdi-delete </v-icon>
+                </v-btn>
 
-          <v-btn icon variant="flat">
-          <v-icon color="primary"> mdi-dots-vertical </v-icon>
-        </v-btn> 
-        </template> -->
+                <v-btn icon variant="flat">
+                  <v-icon color="primary"> mdi-dots-vertical </v-icon>
+                </v-btn> -->
+              </template>
             </v-data-table>
           </v-card>
         </v-container>
@@ -451,6 +453,8 @@ definePageMeta({
 const authStore = useAuthStore();
 const { authenticatedUser, authenticationToken } = storeToRefs(authStore);
 
+const applicants = ref([] as any[]);
+
 const appStore = useAppStore();
 
 const { currentAppBarTitle } = storeToRefs(appStore);
@@ -461,6 +465,8 @@ const route = useRoute();
 const tableData = ref([
   // Vos données de tableau ici
 ]);
+
+const { API_BASE_URL } = useRuntimeConfig().public;
 
 const openDefineCriteriaFormDialog = ref(false);
 
@@ -495,6 +501,7 @@ const binariesItems = ref([
 const openFormDialog = ref(false);
 const campagneToEdit = ref({} as Campagne);
 const campagneToEditType = ref("");
+const isNotRankedRecruitment = ref(false);
 
 const onFormSubmit = () => {
   openFormDialog.value = false;
@@ -590,30 +597,57 @@ function filtrerClésDéfinies(tableau: string[], objet: any): string[] {
 //     });
 // });
 
-const { data, pending, error, refresh, execute, status } = await useFetch(
-  `http://localhost:8000/api/campagnes/${route.params.recruitment_id}/`,
-  {
-    headers: {
-      Authorization: "Bearer " + authenticationToken.value,
-    },
-  }
-);
-
-if (data.value) {
-  campagneToEdit.value = data.value;
-  console.log(data.value);
-  appStore.setCurrentAppBarTitle(
-    `Détails sur le recrutement ${campagneToEdit.value.nom}`
-  );
-  // serverItems.value = data.value;
-}
-
-if (error.value) {
-  // console.log("error : ", error.value?.data);
-  console.log(error.value);
-}
-
 const ranks = ref({});
+
+async function init() {
+  const { data, pending, error, refresh, execute, status } = await useFetch(
+    `http://localhost:8000/api/campagnes/${route.params.recruitment_id}/`,
+    {
+      headers: {
+        Authorization: "Bearer " + authenticationToken.value,
+      },
+    }
+  );
+
+  if (data.value) {
+    campagneToEdit.value = data.value;
+    console.log(data.value);
+    appStore.setCurrentAppBarTitle(
+      `Détails sur le recrutement ${campagneToEdit.value.nom}`
+    );
+    // serverItems.value = data.value;
+  }
+
+  if (error.value) {
+    // console.log("error : ", error.value?.data);
+    console.log(error.value);
+  }
+
+  const { data: data1, error: error1 } = await useFetch(
+    `http://localhost:8000/api/candidats/?campagne=${route.params.recruitment_id}`,
+    {
+      headers: {
+        Authorization: "Bearer " + authenticationToken.value,
+      },
+    }
+  );
+
+  if (data1.value) {
+    console.log(data1.value);
+    ranks.value = data1.value.results;
+
+    console.log(data1.value.results);
+    if (data1.value.count == 0) {
+      isNotRankedRecruitment.value = true;
+    }
+  }
+
+  if (error1.value) {
+    console.log(error1.value.data);
+  }
+}
+
+await init();
 
 const sorteredRanking = ref(
   Object.values(ranks.value)

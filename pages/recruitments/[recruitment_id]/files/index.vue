@@ -1,12 +1,17 @@
 <template>
   <v-container>
     <v-card width="90%" class="mx-auto" :title="campagne.nom">
-      <template #append>
+      <!-- <template #append>
         <v-btn :to="'/recruitments/add'" color="primary"
           >Ajouter un Fichier</v-btn
         >
-      </template>
-      <v-list>
+      </template> -->
+      <v-list v-if="isEmptyArray(campagne.files)">
+        <v-list-item prepend-icon="mdi-information">
+          <template #default><div>Aucun fichier trouvé</div></template>
+        </v-list-item>
+      </v-list>
+      <v-list v-else>
         <v-list-item
           prepend-icon="mdi-file"
           v-for="(file, key) in campagne.files"
@@ -22,7 +27,7 @@
               icon="mdi-eye"
               variant="text"
             ></v-btn>
-            <v-btn size="small" icon="mdi-delete" variant="text"></v-btn>
+            <!-- <v-btn size="small" icon="mdi-delete" variant="text"></v-btn> -->
           </template>
         </v-list-item>
       </v-list>

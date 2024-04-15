@@ -30,7 +30,16 @@
     </v-navigation-drawer>
 
     <v-app-bar>
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <template #prepend>
+        <v-btn v-if="showGoBackIcon" @click="router.back()" icon>
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
+      </template>
+      <v-app-bar-nav-icon
+        v-if="!showGoBackIcon"
+        @click="drawer = !drawer"
+      ></v-app-bar-nav-icon>
+
       <!-- icon="mdi-arrow-left" -->
 
       <v-app-bar-title>{{ currentAppBarTitle }}</v-app-bar-title>
@@ -69,6 +78,8 @@ const route = useRoute();
 const appStore = useAppStore();
 const { currentAppBarTitle } = storeToRefs(appStore);
 
+const showGoBackIcon = ref(true);
+
 const onPowerButtonClick = () => {
   authStore.resetStore();
   router.replace("/auth/login");
@@ -78,9 +89,11 @@ onBeforeMount(async () => {
   const currentRouteMatchingDrawerRoutes = NAVIGATION_DRAWER_ROUTES.find(
     (drawer_route) => drawer_route.path == route.fullPath
   );
+  showGoBackIcon.value = true;
 
   if (currentRouteMatchingDrawerRoutes) {
     appStore.setCurrentAppBarTitle(currentRouteMatchingDrawerRoutes.title);
+    showGoBackIcon.value = false;
   }
 });
 
@@ -90,9 +103,11 @@ watch(
     const currentRouteMatchingDrawerRoutes = NAVIGATION_DRAWER_ROUTES.find(
       (drawer_route) => drawer_route.path == route.fullPath
     );
+    showGoBackIcon.value = true;
 
     if (currentRouteMatchingDrawerRoutes) {
       appStore.setCurrentAppBarTitle(currentRouteMatchingDrawerRoutes.title);
+      showGoBackIcon.value = false;
     }
   }
 );

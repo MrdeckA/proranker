@@ -50,7 +50,7 @@ export const NAVIGATION_DRAWER_ROUTES = [
   // },
 ];
 
-export const AppPublicRoutes = ["index", "about", "auth"];
+export const AppPublicRoutes = ["index", "about", "auth", "faq"];
 
 export enum StatutInvitation {
   ENVOYE = "Envoyée",

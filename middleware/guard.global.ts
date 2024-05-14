@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/store";
-import { AppPublicRoutes } from "@/configs/constants";
+import { AppPublicRoutes } from "@/constants/index";
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const authStore = useAuthStore();
   const { $toast } = useNuxtApp();
@@ -16,7 +16,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   if (!authenticationToken.value && !isPubicRoute) {
     $toast.error("Vous devez d'abord vous connecter !");
 
-    return abortNavigation();
+    return navigateTo("/auth/login");
   }
 
   // if (to.path === "/auth/verify-email" && !to.query.verify_token) {

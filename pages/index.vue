@@ -6,9 +6,7 @@
         <div class="mt-5 ms-5">Optimisez vos recrutements grâce à l'IA !</div>
         <v-row class="mt-5 ms-10">
           <NuxtLink active-class="nuxt_link_active" to="/recruitments"
-            ><v-btn prepend-icon="mdi-play" color="primary"
-              >Démarrer un Classement</v-btn
-            ></NuxtLink
+            ><v-btn color="primary">Commencer</v-btn></NuxtLink
           >
         </v-row>
       </v-col>

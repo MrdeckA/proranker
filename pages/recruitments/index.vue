@@ -48,7 +48,11 @@
         </template>
         <template #item.user="{ item, index }">
           <span class="text-truncate"
-            >{{ findOneUser(item.user).nom_complet }}
+            >{{
+              authenticatedUser?.id == item.user
+                ? "moi"
+                : findOneUser(item.user).nom_complet
+            }}
           </span>
           <!-- <v-btn icon variant="flat">
           <v-icon color="primary"> mdi-dots-vertical </v-icon>

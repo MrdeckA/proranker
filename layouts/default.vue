@@ -3,7 +3,7 @@
 <template>
   <v-layout>
     <v-app-bar :elevation="2">
-      <v-app-bar-title class="ms-5" @click="goToHome()">
+      <v-app-bar-title class="ms-5 cursor-pointer" @click="goToHome()">
         <v-icon size="50" color="primary">mdi-professional-hexagon</v-icon>
         <span class="app_title">PRORANKER</span></v-app-bar-title
       >

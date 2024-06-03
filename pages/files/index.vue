@@ -120,6 +120,6 @@ if (error.value) {
   console.log(error.value);
 }
 
-const itemsPerPage = ref(15);
+const itemsPerPage = ref(25);
 const search = ref("");
 </script>

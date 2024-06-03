@@ -1,7 +1,11 @@
 <template>
   <v-container>
     <v-card width="80%" class="pa-5 mx-auto" title="Nouveau recrutement"
-      ><v-form ref="formRef" @submit.prevent="onRecruitmentFormSumbit">
+      ><v-form
+        @change="onFormChange"
+        ref="formRef"
+        @submit.prevent="onRecruitmentFormSumbit"
+      >
         <v-col>
           <v-text-field
             v-model="campagneToEdit.nom"
@@ -33,7 +37,8 @@
             counter
             label="Fichiers des CV"
             placeholder="Sélectionner vos cv"
-            prepend-icon="mdi-paperclip"
+            append-icon="mdi-paperclip"
+            prepend-icon=""
             variant="outlined"
             :show-size="1000"
             accept="application/pdf"
@@ -42,6 +47,7 @@
             persistent-hint
             hint="*format PDF"
             required
+            :error-messages="fileUploadError"
           >
             <template v-slot:selection="{ fileNames }">
               <template v-for="(fileName, index) in fileNames" :key="fileName">
@@ -393,6 +399,8 @@ const onFormSubmit = () => {
   openFormDialog.value = false;
 };
 
+const fileUploadError = ref<string[]>([]);
+
 interface Critere {
   type: string;
   valeur: string;
@@ -403,11 +411,37 @@ const criteres: Ref<Critere[]> = ref([]);
 
 const onNewCriteriaFormSubmit = () => {};
 
+function checkFileUploadFileErrors() {
+  fileUploadError.value = [];
+
+  if (
+    !campagneToEdit.value.fichiers ||
+    campagneToEdit.value.fichiers.length < 2
+  ) {
+    fileUploadError.value.push("Vous devez téléverser minimum 2 CV !");
+    return false;
+  }
+  if (
+    campagneToEdit.value.fichiers &&
+    campagneToEdit.value.fichiers?.length > 20
+  ) {
+    fileUploadError.value.push(
+      "Vous ne pouvez téléverser au maximum que 20 CV !"
+    );
+    return false;
+  }
+  return true;
+}
+
+const loading = ref(false);
+
 const onRecruitmentFormSumbit = async () => {
   // console.log(campagneToEdit.value);
   const isFormValid = (await formRef.value?.validate())?.valid;
 
-  if (isFormValid) {
+  const fileUploadFieldHasError = checkFileUploadFileErrors();
+
+  if (isFormValid && fileUploadFieldHasError) {
     if (
       !campagneToEdit.value?.fichiers?.length ||
       campagneToEdit.value?.fichiers?.length < 2
@@ -439,19 +473,28 @@ const onRecruitmentFormSumbit = async () => {
         Authorization: "Bearer " + authenticationToken.value,
       },
     };
+    loading.value = true;
 
     await axios
       .post("http://127.0.0.1:8000/api/campagnes/", data, config)
       .then((response) => {
-        router.push(`/recruitments/${response.data.campagne.id}?created=true`);
+        router.replace(
+          `/recruitments/${response.data.campagne.id}?created=true`
+        );
         console.log(response.data);
       })
       .catch((error) => {
+        loading.value = false;
         console.log(error);
       });
+    loading.value = false;
   }
 };
 const search = ref("");
+
+function onFormChange() {
+  checkFileUploadFileErrors();
+}
 
 function isDefinedValue(value: any): boolean {
   return !isUndefined(value);

@@ -265,7 +265,7 @@ async function init() {
 await loadRecruitments();
 await init();
 
-const itemsPerPage = ref(15);
+const itemsPerPage = ref(25);
 const search = ref("");
 
 const onDeleteIconClick = async (item: any) => {

@@ -2,9 +2,9 @@
   <div>
     <v-container>
       <h1 class="headline text-center my-4">ProRanker - Comment ça marche</h1>
-      <v-row>
+      <v-row justify="center">
         <!-- Création du Recrutement -->
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="10">
           <v-card class="pa-4">
             <h3 class="subtitle-1">1. Création du Recrutement</h3>
             <p>
@@ -17,7 +17,7 @@
           </v-card>
         </v-col>
         <!-- Soumission du Formulaire -->
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="10">
           <v-card class="pa-4">
             <h3 class="subtitle-1">2. Soumission du Formulaire</h3>
             <p>
@@ -29,11 +29,8 @@
             </p>
           </v-card>
         </v-col>
-      </v-row>
-
-      <v-row>
         <!-- Validation du Recrutement -->
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="10">
           <v-card class="pa-4">
             <h3 class="subtitle-1">3. Validation du Recrutement</h3>
             <p>
@@ -44,7 +41,7 @@
           </v-card>
         </v-col>
         <!-- Lancement du Processus de Classement -->
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="10">
           <v-card class="pa-4">
             <h3 class="subtitle-1">4. Lancement du Processus de Classement</h3>
             <p>
@@ -53,11 +50,8 @@
             </p>
           </v-card>
         </v-col>
-      </v-row>
-
-      <v-row>
         <!-- Analyse des CV -->
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="10">
           <v-card class="pa-4">
             <h3 class="subtitle-1">5. Analyse des CV</h3>
             <p>
@@ -69,7 +63,7 @@
           </v-card>
         </v-col>
         <!-- Classement des Candidats -->
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="10">
           <v-card class="pa-4">
             <h3 class="subtitle-1">6. Classement des Candidats</h3>
             <p>
@@ -81,11 +75,8 @@
             </p>
           </v-card>
         </v-col>
-      </v-row>
-
-      <v-row>
         <!-- Affichage des Résultats -->
-        <v-col cols="12">
+        <v-col cols="12" md="10">
           <v-card class="pa-4">
             <h3 class="subtitle-1">7. Affichage des Résultats</h3>
             <p>

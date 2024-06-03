@@ -6,7 +6,12 @@
         <v-list-item>
           <!-- <img height="60em" src="@/assets/images/logo.png" alt="logo" /> -->
 
-          <v-btn variant="text" class="mb-5 mt-2">
+          <v-btn
+            @click="$router.push('/dashboard')"
+            variant="text"
+            class="mb-5 mt-2"
+            :ripple="false"
+          >
             <template #prepend>
               <v-icon size="50" icon="mdi-professional-hexagon"></v-icon>
             </template>

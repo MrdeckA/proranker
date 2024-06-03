@@ -186,7 +186,7 @@ const headers = ref([
 
 const applicants = ref([] as any[]);
 const totalItems = ref(0);
-const itemsPerPage = ref(10);
+const itemsPerPage = ref(25);
 const search = ref("");
 // if (data.value) {
 //   // console.log(data.value);

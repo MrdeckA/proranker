@@ -22,7 +22,7 @@
         ></v-btn>
 
         <v-btn
-          v-if="!isUpdate && !noUpdate"
+          v-if="!isUpdate && !noUpdate && isNotRankedRecruitment"
           variant="text"
           icon
           @click="isUpdate = true"
@@ -163,6 +163,7 @@
             color="primary"
             @click="isUpdate = true"
             prepend-icon="mdi-pencil"
+            v-if="isNotRankedRecruitment"
             >Modifier</v-btn
           >
           <v-btn color="red" prepend-icon="mdi-delete">Supprimer</v-btn>
@@ -683,7 +684,7 @@ watch(ranks, () => {
     .reverse();
 });
 
-const itemsPerPage = ref(15);
+const itemsPerPage = ref(30);
 
 const headers = ref([
   {
@@ -730,6 +731,10 @@ function onPrinterClick() {
   if (process.client) {
     const prtHtml = cardRef.value?.$el.innerHTML;
     const mycard = document.getElementById("my-card");
+
+    if (mycard) {
+      exportToPDF(`Resultat-Campagne-${campagneToEdit.value.nom}`, mycard);
+    }
     // // const prtHtml = cardContent.value.$el.innerHTML;
     // const WinPrint = window.open(
     //   "",
@@ -743,7 +748,6 @@ function onPrinterClick() {
     // WinPrint?.close();
     // window.open();
     // window.print;
-    exportToPDF("my-pdf-file.pdf", mycard);
   }
 }
 
@@ -784,6 +788,7 @@ async function startPrediction() {
 
     console.log(ranks.value);
     // serverItems.value = data.value;
+    isNotRankedRecruitment.value = false;
   }
 
   if (error.value) {

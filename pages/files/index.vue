@@ -84,7 +84,7 @@ const headers = ref([
     sortable: false,
     key: "id",
   },
-  { title: "Campagne", width: "25%", key: "nom", align: "start" },
+  { title: "Recrutement", width: "25%", key: "nom", align: "start" },
 
   {
     title: "Nombre de fichiers",
@@ -112,7 +112,7 @@ if (data.value) {
     return { ...c, files: JSON.parse(c.files) };
   });
   console.log(campagnes.value);
-  appStore.setCurrentAppBarTitle(`Détails Fichiers`);
+  appStore.setCurrentAppBarTitle(`Mes Fichiers`);
 }
 
 if (error.value) {

@@ -32,6 +32,35 @@
       </template>
       <v-form @submit.prevent="onRecruitmentFormSumbit">
         <v-col>
+          <a :href="`/recruitments/${campagneToEdit.id}/form`" target="_blank"
+            >Lien vers le formulaire d'inscription
+            <v-btn
+              :href="`/recruitments/${campagneToEdit.id}/form`"
+              target="_blank"
+              variant="flat"
+              icon="mdi-open-in-new"
+            ></v-btn
+          ></a>
+          <v-btn
+            target="_blank"
+            variant="flat"
+            color="primary"
+            class="ms-4"
+            prepend-icon="mdi-content-copy"
+            @click="copyLink"
+            >Copier le lien</v-btn
+          >
+          <v-snackbar
+            prepend-icon="mdi-account"
+            v-model="snackbar"
+            :timeout="3000"
+            color="primary"
+            top
+          >
+            {{ snackbarMessage }}
+          </v-snackbar>
+        </v-col>
+        <v-col>
           <v-text-field
             v-model="campagneToEdit.nom"
             label="Nom"
@@ -475,6 +504,23 @@ const appStore = useAppStore();
 
 const { currentAppBarTitle } = storeToRefs(appStore);
 
+const snackbar = ref(false);
+const snackbarMessage = ref("");
+
+const copyLink = async () => {
+  try {
+    await navigator.clipboard.writeText(
+      `${APP_URL}/recruitments/${campagneToEdit.value.id}/form`
+    );
+
+    snackbarMessage.value = "Link copied to clipboard!";
+    snackbar.value = true;
+  } catch (err) {
+    snackbarMessage.value = "Failed to copy link.";
+    snackbar.value = true;
+  }
+};
+
 const dialog = ref(false);
 const { $toast } = useNuxtApp();
 const route = useRoute();
@@ -482,7 +528,7 @@ const tableData = ref([
   // Vos données de tableau ici
 ]);
 const router = useRouter();
-const { API_BASE_URL } = useRuntimeConfig().public;
+const { API_BASE_URL, APP_URL } = useRuntimeConfig().public;
 const loading = ref(false);
 const openDefineCriteriaFormDialog = ref(false);
 
@@ -838,9 +884,7 @@ const onUpdateSave = async () => {
   if (resData.value) {
     console.log(resData.value);
     $toast.success("Recrutement mis à jour avec succès");
-    setTimeout(() => {
-      reloadNuxtApp();
-    }, 2000);
+    await init();
   }
 
   if (resError.value) {

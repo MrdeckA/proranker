@@ -1,9 +1,9 @@
 <template>
   <v-container class="my-5">
     <v-row>
-      <v-col cols="12">
+      <v-col cols="6">
         <v-form ref="formRef" @submit.prevent="onProfilFormSubmit">
-          <v-card title="Profil" width="55%" flat class="border mx-auto">
+          <v-card title="Profil" width="100%" flat class="border mx-auto">
             <v-card-text>
               <v-row>
                 <v-col cols="12">
@@ -71,8 +71,8 @@
           </v-card>
         </v-form>
       </v-col>
-      <v-col cols="12" class="my-auto mt-14">
-        <v-card width="55%" title="Mot de passe" class="border mx-auto">
+      <v-col cols="6" class="my-auto mt-14">
+        <v-card width="85%" title="Mot de passe" class="border mx-auto">
           <VCol cols="12">
             <VForm ref="passworFormRef" @submit.prevent="submitForm">
               <div class="mt-1">

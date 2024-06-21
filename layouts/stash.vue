@@ -28,7 +28,7 @@
       class="text-none"
       variant="plain"
       :color="currentPath == '/auth/login' ? 'primary' : 'black'"
-      >FAQ</v-btn
+      >Comment ça marche ?</v-btn
     ></NuxtLink
   >
 </template>

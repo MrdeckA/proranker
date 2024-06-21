@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-navigation-drawer v-model="drawer" class="bg-primary">
+    <v-navigation-drawer v-model="drawer" width="300" class="bg-primary">
       <!--  -->
       <v-list>
         <v-list-item>

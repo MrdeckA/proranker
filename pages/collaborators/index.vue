@@ -149,7 +149,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useAuthStore } from "~/store";
+import { useAppStore, useAuthStore } from "~/store";
 import type { Collaboration, TUser } from "~/types";
 import { ruleEmail, ruleRequired } from "~/helpers/rules";
 import { RoleCollaborateur } from "~/constants";
@@ -189,8 +189,8 @@ const headers = ref([
     sortable: false,
     key: "id",
   },
-  { title: "Nom", key: "nom", align: "start" },
   { title: "Prénom", key: "prenom", align: "start" },
+  { title: "Nom", key: "nom", align: "start" },
   { title: "Email", key: "email", align: "start" },
   { title: "Role", key: "role", align: "start" },
   { title: "Statut Invitation", key: "statut_invitation", align: "start" },
@@ -221,6 +221,9 @@ function openFormDialogForCampagne(item: any, index: number) {
   // console.log(index);
   openFormDialog.value = true;
 }
+
+const appStore = useAppStore();
+appStore.setCurrentAppBarTitle(`Mes Collaborateurs`);
 
 const collaborationFormRef: Ref<VForm | undefined> = ref();
 

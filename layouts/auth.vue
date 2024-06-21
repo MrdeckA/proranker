@@ -38,7 +38,7 @@
             variant="plain"
             class="font-weight-bold"
             :color="currentPath == '/faq' ? 'primary' : 'black'"
-            >FAQ</v-btn
+            >Comment ça marche ?</v-btn
           ></NuxtLink
         >
       </template>

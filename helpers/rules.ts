@@ -13,3 +13,9 @@ export const ruleLinkURL = (str: string) => {
 
   return linkRegex.test(str) || "Vous devez entrer une URL valide";
 };
+
+export const ruleOpenAIAPIKey = (str: string) => {
+  const linkRegex = /^sk-[A-Za-z0-9]{32,}$/;
+
+  return linkRegex.test(str) || "Clé API invalide";
+};

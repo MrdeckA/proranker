@@ -1,7 +1,11 @@
 <template>
   <v-container>
     <v-card width="80%" class="pa-5 mx-auto" title="Nouveau recrutement"
-      ><v-form ref="formRef" @submit.prevent="onRecruitmentFormSumbit">
+      ><v-form
+        @change="onFormChange"
+        ref="formRef"
+        @submit.prevent="onRecruitmentFormSumbit"
+      >
         <v-col>
           <v-text-field
             v-model="campagneToEdit.nom"
@@ -27,46 +31,46 @@
         ></v-col>
 
         <!-- <v-col>
-          <v-file-input
-            v-model="campagneToEdit.fichiers"
-            color="primary"
-            counter
-            label="Fichiers des CV"
-            placeholder="Sélectionner vos cv"
-            append-icon="mdi-paperclip"
-            prepend-icon=""
-            variant="outlined"
-            :show-size="1000"
-            accept="application/pdf"
-            multiple
-            maxlength="20"
-            persistent-hint
-            hint="*format PDF"
-            required
-            :error-messages="fileUploadError"
-          >
-            <template v-slot:selection="{ fileNames }">
-              <template v-for="(fileName, index) in fileNames" :key="fileName">
-                <v-chip
-                  v-if="index < 2"
-                  color="deep-purple-accent-4"
-                  label
-                  size="small"
-                  class="me-2"
-                >
-                  {{ fileName }}
-                </v-chip>
-
-                <span
-                  v-else-if="index === 2"
-                  class="text-overline text-grey-darken-3 mx-2"
-                >
-                  +{{ campagneToEdit?.fichiers?.length - 2 }} Fichiers(s)
-                </span>
+            <v-file-input
+              v-model="campagneToEdit.fichiers"
+              color="primary"
+              counter
+              label="Fichiers des CV"
+              placeholder="Sélectionner vos cv"
+              append-icon="mdi-paperclip"
+              prepend-icon=""
+              variant="outlined"
+              :show-size="1000"
+              accept="application/pdf"
+              multiple
+              maxlength="20"
+              persistent-hint
+              hint="*format PDF"
+              required
+              :error-messages="fileUploadError"
+            >
+              <template v-slot:selection="{ fileNames }">
+                <template v-for="(fileName, index) in fileNames" :key="fileName">
+                  <v-chip
+                    v-if="index < 2"
+                    color="deep-purple-accent-4"
+                    label
+                    size="small"
+                    class="me-2"
+                  >
+                    {{ fileName }}
+                  </v-chip>
+  
+                  <span
+                    v-else-if="index === 2"
+                    class="text-overline text-grey-darken-3 mx-2"
+                  >
+                    +{{ campagneToEdit?.fichiers?.length - 2 }} Fichiers(s)
+                  </span>
+                </template>
               </template>
-            </template>
-          </v-file-input>
-        </v-col> -->
+            </v-file-input>
+          </v-col> -->
         <v-col class="border">
           <v-list>
             <v-list-subheader
@@ -193,13 +197,13 @@
         <v-container>
           <v-card class="px-0" title="Ajout d'un nouveau critère">
             <!-- <template #append>
-              <v-btn
-                class="ma-2"
-                color="primary"
-                @click="isActive.value = false"
-                >Retour</v-btn
-              >
-            </template> -->
+                <v-btn
+                  class="ma-2"
+                  color="primary"
+                  @click="isActive.value = false"
+                  >Retour</v-btn
+                >
+              </template> -->
             <v-form @submit.prevent="onNewCriteriaFormSubmit">
               <v-row class="mx-2">
                 <v-col>
@@ -375,13 +379,31 @@ const criteriaTypes = ref(
   ].sort()
 );
 
+const openDeleteDialog = ref(false);
+
+const binariesItems = ref([
+  {
+    label: "Oui",
+    value: true,
+  },
+  {
+    label: "Non",
+    value: false,
+  },
+]);
 const openFormDialog = ref(false);
 const campagneToEdit = ref({} as Campagne);
 const campagneToEditType = ref("");
 
+const onFormSubmit = () => {
+  openFormDialog.value = false;
+};
+
 const appStore = useAppStore();
 
 appStore.setCurrentAppBarTitle(`Créer un recrutement`);
+
+const fileUploadError = ref<string[]>([]);
 
 interface Critere {
   type: string;
@@ -393,39 +415,77 @@ const criteres: Ref<Critere[]> = ref([]);
 
 const onNewCriteriaFormSubmit = () => {};
 
+function checkFileUploadFileErrors() {
+  fileUploadError.value = [];
+
+  if (
+    !campagneToEdit.value.fichiers ||
+    campagneToEdit.value.fichiers.length < 2
+  ) {
+    fileUploadError.value.push("Vous devez téléverser minimum 2 CV !");
+    return false;
+  }
+  if (
+    campagneToEdit.value.fichiers &&
+    campagneToEdit.value.fichiers?.length > 20
+  ) {
+    fileUploadError.value.push(
+      "Vous ne pouvez téléverser au maximum que 20 CV !"
+    );
+    return false;
+  }
+  return true;
+}
+
 const loading = ref(false);
 
 const onRecruitmentFormSumbit = async () => {
   // console.log(campagneToEdit.value);
   const isFormValid = (await formRef.value?.validate())?.valid;
 
-  if (isFormValid) {
+  const fileUploadFieldHasError = checkFileUploadFileErrors();
+
+  if (isFormValid && fileUploadFieldHasError) {
+    if (
+      !campagneToEdit.value?.fichiers?.length ||
+      campagneToEdit.value?.fichiers?.length < 2
+    ) {
+      return $toast.error("Minimum 2 fichiers requis");
+    }
+    let data = new FormData();
+    campagneToEdit.value.fichiers?.forEach((file, index) => {
+      console.log(index);
+      data.append(file.name, campagneToEdit.value.fichiers[index]);
+    });
+
+    data.append(
+      "model",
+      JSON.stringify({
+        ...campagneToEdit.value,
+        user: authenticatedUser.value?.id,
+      })
+    );
+
     let config = {
       method: "post",
+      maxBodyLength: Infinity,
+      data: {
+        ...data,
+      },
       Headers: {
+        "Content-Type": "multipart/form-data",
         Authorization: "Bearer " + authenticationToken.value,
       },
     };
     loading.value = true;
 
     await axios
-      .post(
-        "http://127.0.0.1:8000/api/campagnes/",
-        {
-          ...campagneToEdit.value,
-          languages: JSON.stringify(campagneToEdit.value.languages),
-          skills: JSON.stringify(campagneToEdit.value.skills),
-          degrees: JSON.stringify(campagneToEdit.value.degrees),
-          certifications: JSON.stringify(campagneToEdit.value.certifications),
-          files: JSON.stringify([]),
-          user: authenticatedUser?.value?.id,
-        },
-        config
-      )
+      .post("http://127.0.0.1:8000/api/campagnes/", data, config)
       .then((response) => {
+        router.replace(
+          `/recruitments/${response.data.campagne.id}?created=true`
+        );
         console.log(response.data);
-
-        router.replace(`/recruitments/${response.data.id}?created=true`);
       })
       .catch((error) => {
         loading.value = false;
@@ -434,11 +494,45 @@ const onRecruitmentFormSumbit = async () => {
     loading.value = false;
   }
 };
+const search = ref("");
 
-console.log(authenticatedUser.value);
+function onFormChange() {
+  checkFileUploadFileErrors();
+}
 
 function isDefinedValue(value: any): boolean {
   return !isUndefined(value);
+}
+
+enum Correspondance {
+  "Nombre minimum de langues" = "minimum_number_of_languages",
+  "Nombre minimum d'expériences" = "minimum_number_of_experiences",
+  "Nombre minimum d'années d'expérience" = "minimum_number_of_years_of_experience",
+  "Diplomes" = "degrees",
+  "Langues" = "languages",
+  "Compétences" = "skills",
+  "Certifications" = "certifications",
+}
+
+watch(campagneToEdit.value, () => {
+  // criteriaTypes.value = filtrerClésDéfinies(
+  //   criteriaTypes.value,
+  //   campagneToEdit.value
+  // ).sort();
+  // console.log(criteriaTypes.value);
+  // criteriaTypes.value.forEach((criteria) => {
+  //   if (isDefinedValue(campagneToEdit.value[criteria])) {
+  //     console.log(criteria);
+  //   }
+  // });
+});
+function filtrerClésDéfinies(tableau: string[], objet: any): string[] {
+  // Filtrer les clés du tableau qui sont définies dans l'objet
+  const clésDéfinies = tableau.filter((clé) => {
+    return isUndefined(objet[Correspondance[clé]]);
+  });
+
+  return clésDéfinies;
 }
 
 const removeCriteria = (key: string) => {

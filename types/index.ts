@@ -13,6 +13,8 @@ export type BaseHttpGetOptions = {
 export interface Campagne {
   id?: number;
   nom?: string;
+  link?: string;
+  is_active?: boolean;
   description_poste?: string;
   intitule_poste?: string;
   minimum_number_of_languages?: number;

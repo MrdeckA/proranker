@@ -444,4 +444,28 @@ function isDefinedValue(value: any): boolean {
 const removeCriteria = (key: string) => {
   delete campagneToEdit.value[key];
 };
+
+const fileUploadError = ref<string[]>([]);
+
+function checkFileUploadFileErrors() {
+  fileUploadError.value = [];
+
+  if (
+    !campagneToEdit.value.fichiers ||
+    campagneToEdit.value.fichiers.length < 2
+  ) {
+    fileUploadError.value.push("Vous devez téléverser minimum 2 CV !");
+    return false;
+  }
+  if (
+    campagneToEdit.value.fichiers &&
+    campagneToEdit.value.fichiers?.length > 20
+  ) {
+    fileUploadError.value.push(
+      "Vous ne pouvez téléverser au maximum que 20 CV !"
+    );
+    return false;
+  }
+  return true;
+}
 </script>

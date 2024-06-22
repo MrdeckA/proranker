@@ -15,7 +15,9 @@
           >Afficher résultats</v-btn
         >
         <v-btn
-          v-if="!isUpdate && isNotRankedRecruitment && !noUpdate"
+          v-if="
+            !isUpdate && isNotRankedRecruitment && !noUpdate && files.length > 2
+          "
           color="primary"
           @click="startPrediction()"
           icon="mdi-play"
@@ -231,7 +233,7 @@
               <v-btn icon variant="text" @click="onPrinterClick()"
                 ><v-icon size="30">mdi-download</v-icon></v-btn
               >
-              <v-btn icon variant="text" @click="onPrinterClick()"
+              <v-btn icon variant="text" @click="onPrintClick()"
                 ><v-icon size="30">mdi-printer</v-icon></v-btn
               >
             </template>
@@ -251,16 +253,15 @@
           <v-icon color="primary"> mdi-dots-vertical </v-icon>
         </v-btn> -->
               </template>
-              <template #item.action="{ item }">
-                <!-- <v-btn
+              <template #item.detail="{ item }">
+                <v-btn
                   size="small"
-                  :href="`${API_BASE_URL}${item.fichier_sauvegarde}`"
+                  :to="`/recruitments/${campagneToEdit.id}/applicants/${item.id}`"
                   icon
-                  target="_blank"
                   variant="flat"
                 >
                   <v-icon color="primary"> mdi-eye </v-icon></v-btn
-                > -->
+                >
                 <!-- <v-btn size="small" icon variant="flat">
                   <v-icon color="primary"> mdi-pencil </v-icon>
                 </v-btn>
@@ -272,6 +273,13 @@
                 <v-btn icon variant="flat">
                   <v-icon color="primary"> mdi-dots-vertical </v-icon>
                 </v-btn> -->
+              </template>
+              <template #item.fichier="{ item }">
+                <a
+                  :href="`${API_BASE_URL}/${item.fichier_sauvegarde}`"
+                  target="_blank"
+                  >{{ item.fichier }} <v-icon>mdi-open-in-new</v-icon>
+                </a>
               </template>
             </v-data-table>
           </v-card>
@@ -577,6 +585,8 @@ const criteres: Ref<Critere[]> = ref([]);
 
 const onNewCriteriaFormSubmit = () => {};
 
+const files = ref([] as any[]);
+
 const onRecruitmentFormSumbit = async () => {
   // console.log(campagneToEdit.value);
   let data = new FormData();
@@ -680,6 +690,8 @@ async function init() {
     campagneToEdit.value.degrees = JSON.parse(campagneToEdit.value.degrees);
     campagneToEdit.value.languages = JSON.parse(campagneToEdit.value.languages);
 
+    files.value = JSON.parse(campagneToEdit.value.files as string);
+
     console.log(data.value);
     appStore.setCurrentAppBarTitle(
       `Détails sur le recrutement ${campagneToEdit.value.nom}`
@@ -749,7 +761,6 @@ const headers = ref([
   },
   {
     title: "Score",
-    width: "25%",
     key: "score",
     align: "start",
   },
@@ -761,8 +772,15 @@ const headers = ref([
   },
   {
     title: "Fichier",
-    width: "25%",
+    width: "50%",
     key: "fichier",
+    align: "start",
+  },
+
+  {
+    title: "Action",
+    width: "25%",
+    key: "detail",
     align: "start",
   },
 
@@ -794,6 +812,11 @@ function onPrinterClick() {
     // WinPrint?.close();
     // window.open();
     // window.print;
+  }
+}
+function onPrintClick() {
+  if (process.client) {
+    window.print();
   }
 }
 

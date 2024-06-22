@@ -13,18 +13,18 @@
               <v-row>
                 <v-col cols="12">
                   <v-text-field
-                    id="lastName"
+                    id="_openai_api_key"
                     v-model="meInformation.nom"
                     label="Clé API OpenAI"
-                    placeholder="Doe"
+                    placeholder="Openai_api_key"
                     required
                     hint="*Champ requis"
                     persistent-hint
-                    autocomplete="lastName"
+                    autocomplete="_openai_api_key"
                     :rules="[ruleRequired, ruleOpenAIAPIKey]"
                     type="text"
                     prepend-inner-icon="mdi-key"
-                    name="lastName"
+                    name="_openai_api_key"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -119,7 +119,7 @@ const onFormSubmit = async () => {
 onBeforeMount(async () => {
   appStore.setCurrentPageTitle("Ma configuration");
 
-  await init();
+  // await init();
 });
 
 async function init() {

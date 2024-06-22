@@ -26,6 +26,7 @@ export interface Campagne {
   has_awards?: boolean;
   has_certifications?: boolean;
   fichiers?: File[];
+  files?: string;
   certifications?: string[];
   numberoffiles?: Number;
 }

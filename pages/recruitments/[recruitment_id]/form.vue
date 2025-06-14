@@ -24,10 +24,13 @@
         <v-form ref="formRef" v-model="valid">
           <v-text-field
             v-model="formData.email"
-            :rules="[rules.required, rules.email]"
             label="E-mail *"
             required
             variant="outlined"
+            autocomplete="email"
+            autocapitalize="off"
+            type="email"
+            id="email"
           ></v-text-field>
 
           <v-text-field
@@ -38,7 +41,6 @@
             id="last-name"
             autocapitalize="off"
             required
-            :rules="[rules.required]"
             v-model="formData.nom"
             label="Nom"
             class="mt-2"
@@ -48,11 +50,10 @@
             density="comfortable"
             placeholder="Saisissez votre prénom"
             variant="outlined"
-            autocomplete="email"
+            autocomplete="first-name"
             id="first-name"
             autocapitalize="off"
             required
-            :rules="[rules.required]"
             v-model="formData.prenom"
             label="Prénom"
             class="mt-2"
@@ -210,7 +211,9 @@ async function init() {
   }
 }
 
-await init();
+onMounted(async () => {
+  await init();
+});
 </script>
 
 <style scoped>

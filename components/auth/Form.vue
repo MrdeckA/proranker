@@ -286,7 +286,7 @@ const inviteur = ref(route.query.inviteur);
 const role = ref(route.query.role);
 const email = ref(route.query.email);
 
-onBeforeMount(() => {
+onMounted(() => {
   if (email) {
     user.email = email.value as string;
   }

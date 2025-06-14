@@ -1,0 +1,24 @@
+[
+  {
+    "nom": "Campagne de Recrutement 2024",
+    "description_poste": "Nous recherchons un développeur full-stack expérimenté pour rejoindre notre équipe dynamique. Le candidat idéal aura une solide expérience en développement web, avec une connaissance approfondie des technologies front-end et back-end. Il ou elle sera responsable de la conception, du développement et de la maintenance de nos applications web, tout en travaillant en étroite collaboration avec les autres membres de l'équipe pour assurer la qualité et la performance des projets.",
+    "intitule_poste": "Développeur Full-Stack",
+    "minimum_number_of_languages": 2,
+    "minimum_number_of_experiences": 5,
+    "languages": "JavaScript, Python",
+    "degrees": "Master en Informatique",
+    "certifications": "Certification AWS, Certification Google Cloud",
+    "skills": "Développement Web, DevOps, Sécurité, Conception UI/UX, Gestion de bases de données"
+  },
+  {
+    "nom": "Campagne de Recrutement Spécialiste IA 2024",
+    "description_poste": "Nous cherchons un développeur full-stack ayant une expertise en intelligence artificielle pour rejoindre notre équipe innovante. Le candidat idéal possédera des compétences avancées en développement de modèles d'apprentissage automatique, ainsi qu'une expérience solide en intégration de solutions IA dans des applications web. Le candidat sera responsable de la création et de l'optimisation de modèles de machine learning, en collaborant étroitement avec les équipes produit et ingénierie pour développer des solutions intelligentes et performantes.",
+    "intitule_poste": "Développeur Full-Stack et Spécialiste IA",
+    "minimum_number_of_languages": 3,
+    "minimum_number_of_experiences": 6,
+    "languages": "JavaScript, Python, R",
+    "degrees": "Master en Informatique ou Data Science",
+    "certifications": "Certification AWS, Certification Google Cloud, Certification en Machine Learning",
+    "skills": "Développement Web, Machine Learning, Intelligence Artificielle, Analyse de données, Conception d'algorithmes, Gestion de bases de données"
+  }
+]

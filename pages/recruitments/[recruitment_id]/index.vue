@@ -820,7 +820,7 @@ function onPrintClick() {
   }
 }
 
-onBeforeMount(() => {
+onMounted(() => {
   if (route.query.created === "true") {
     $toast.success("Recrutement créé avec succès !");
   }
@@ -858,6 +858,8 @@ async function startPrediction() {
     console.log(ranks.value);
     // serverItems.value = data.value;
     isNotRankedRecruitment.value = false;
+
+    await init();
   }
 
   if (error.value) {

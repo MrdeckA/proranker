@@ -30,6 +30,7 @@
           :prepend-icon="route.icon"
           :title="route.title"
           :to="route.path"
+          :active="$route.path.startsWith(route.path)"
         ></v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -90,7 +91,7 @@ const onPowerButtonClick = () => {
   router.replace("/auth/login");
 };
 
-onBeforeMount(async () => {
+onMounted(async () => {
   const currentRouteMatchingDrawerRoutes = NAVIGATION_DRAWER_ROUTES.find(
     (drawer_route) => drawer_route.path == route.fullPath
   );

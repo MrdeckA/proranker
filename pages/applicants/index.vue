@@ -207,7 +207,7 @@ function openFormDialogForCampagne(item: any, index: number) {
 }
 
 const campagnesList = ref([] as any[]);
-onBeforeMount(async () => {
+onMounted(async () => {
   const { data, error } = await useFetch(
     `http://localhost:8000/api/campagnes/`,
     {

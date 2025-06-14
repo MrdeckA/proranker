@@ -275,7 +275,7 @@ const onFormSubmit = async () => {
   // resetForm();
 };
 
-onBeforeMount(async () => {
+onMounted(async () => {
   appStore.setCurrentPageTitle("Modifier profil");
 
   await init();

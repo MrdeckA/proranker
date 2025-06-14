@@ -14,7 +14,7 @@
                 <v-col cols="12">
                   <v-text-field
                     id="_openai_api_key"
-                    v-model="meInformation.nom"
+                    v-model="meInformation.api_key"
                     label="Clé API OpenAI"
                     placeholder="Openai_api_key"
                     required
@@ -26,6 +26,23 @@
                     prepend-inner-icon="mdi-key"
                     name="_openai_api_key"
                   ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-autocomplete
+                    id="_openai_api_key"
+                    v-model="meInformation.model"
+                    label="Model OpenAI"
+                    placeholder="Openai_api_key"
+                    required
+                    hint="*Champ requis"
+                    persistent-hint
+                    autocomplete="_openai_api_key"
+                    :rules="[ruleRequired]"
+                    type="text"
+                    prepend-inner-icon="mdi-key"
+                    name="_openai_api_key"
+                    :items="openaiModels"
+                  ></v-autocomplete>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -97,6 +114,23 @@ const resetForm = () => {
   }
 };
 
+const openaiModels = ref([
+  "GPT-3-Ada",
+  "GPT-3-Babbage",
+  "GPT-3-Curie",
+  "GPT-3-Davinci",
+  "GPT-3.5-Ada",
+  "GPT-3.5-Babbage",
+  "GPT-3.5-Curie",
+  "GPT-3.5-Davinci",
+  "GPT-3.5-Turbo",
+  "GPT-4-Standard",
+  "GPT-4-Turbo",
+  "GPT-4o",
+]);
+
+console.log(openaiModels);
+
 const onProfilFormSubmit = async () => {
   // console.log("ok");
 
@@ -110,13 +144,21 @@ const onProfilFormSubmit = async () => {
   }
 };
 
-const meInformation = ref({} as TUser);
+interface TConfig {
+  model?: string;
+  api_key?: string;
+}
+
+const meInformation = ref({
+  model: "GPT-3.5-Turbo",
+  api_key: "sk-bMF2oqyJlKGdwHvvrvrvnIvrevC0aCVutyyutC",
+} as TConfig);
 
 const onFormSubmit = async () => {
   // resetForm();
 };
 
-onBeforeMount(async () => {
+onMounted(async () => {
   appStore.setCurrentPageTitle("Ma configuration");
 
   // await init();

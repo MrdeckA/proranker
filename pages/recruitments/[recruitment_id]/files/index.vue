@@ -54,7 +54,7 @@ const appStore = useAppStore();
 
 appStore.setCurrentAppBarTitle("Fichiers Recrutement");
 
-onBeforeMount(async () => {
+onMounted(async () => {
   const { data: resData, error: resError } = await useFetch(
     `http://127.0.0.1:8000/api/campagnes/${route.params.recruitment_id}/`,
     {

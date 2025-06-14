@@ -262,8 +262,10 @@ async function init() {
   }
 }
 
-await loadRecruitments();
-await init();
+onMounted(async () => {
+  await loadRecruitments();
+  await init();
+});
 
 const itemsPerPage = ref(25);
 const search = ref("");
